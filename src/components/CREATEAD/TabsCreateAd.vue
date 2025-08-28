@@ -1,7 +1,9 @@
 <template>
-   <div class="tabs__title">Новое объявление от имени «Сергей Олегович #7237 8348 0132»</div>
+   <div class="tabs__title">
+      Новое объявление от имени «{{ userFullName }} #{{ userCode }}»
+   </div>
    <div class="tabs">
-      
+
       <div v-for="(tab, index) in tabs" :key="tab.index" class="tabs__item">
          <div class="tabs__tab" :class="{
             'tabs__tab--active': activeTab === tab.index,
@@ -29,17 +31,23 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useTabsStore } from '@/store/tabsStore';
 import { useCreateStore } from '@/store/create';
+import { getUser } from '@/services/apiClient';
 import { usePopupErrorStore } from '@/store/popupErrorStore';
+import { useRoute } from 'vue-router';
 
 const popupErrorStore = usePopupErrorStore();
 const tabsStore = useTabsStore();
 const createStore = useCreateStore();
+const route = useRoute();
 
 const activeTab = computed(() => tabsStore.activeTab);
 const tabs = computed(() => tabsStore.tabs);
+
+const userFullName = ref('');
+const userCode = ref('');
 
 const selectTab = (index) => {
    if ([2, 3].includes(index) && !createStore.isCharacteristicFieldsFilled) {
@@ -48,6 +56,19 @@ const selectTab = (index) => {
    }
    tabsStore.setActiveTab(index);
 };
+
+onMounted(async () => {
+   const userId = route.params.id;
+   if (userId) {
+      try {
+         const userData = await getUser(userId);
+         userFullName.value = userData.username || '';
+         userCode.value = userData.unique_code || '';
+      } catch (err) {
+         console.error('Ошибка при получении пользователя:', err);
+      }
+   }
+});
 </script>
 
 <style lang="scss" scoped>
