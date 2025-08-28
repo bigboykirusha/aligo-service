@@ -4,9 +4,10 @@ export const useTabsStore = defineStore('tabs', {
    state: () => ({
       activeTab: 1,
       tabs: [
-         { index: 1, label: 'Характеристики' },
-         { index: 2, label: 'Опции' },
-         { index: 3, label: 'Объявление' },
+         { index: 1, label: 'Категория' },
+         { index: 2, label: 'Характеристики' },
+         { index: 3, label: 'Опции' },
+         { index: 4, label: 'Объявление' },
       ],
    }),
 

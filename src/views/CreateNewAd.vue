@@ -14,7 +14,7 @@ import { useCreateStore } from '@/store/create.js';
 import { useUserStore } from '@/store/user.js';
 import { useTabsStore } from '@/store/tabsStore.js';
 import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
-import { useCookies } from 'vue3-cookies'; 
+import { useCookies } from 'vue3-cookies';
 import SaveAdPopup from '@/components/CREATEAD/SaveAdPopup.vue';
 import CreateAdForm from '@/components/CREATEAD/CreateAdForm.vue';
 
@@ -137,9 +137,13 @@ onBeforeRouteLeave((to, from, next) => {
 <style scoped lang="scss">
 .container {
    flex: 1;
-   height: 100%;
+   min-height: 100%;
    width: 100%;
    padding: 16px;
    margin: 0 auto;
+
+   @media (max-width: 1024px) {
+      margin-top: 60px;
+   }
 }
 </style>

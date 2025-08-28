@@ -30,7 +30,7 @@ import { popupCodeStore } from '@/store/popupCode.js';
 
 const popUpCode = popupCodeStore();
 const isVisible = ref(false);
-const isSidebarOpen = ref(true);
+const isSidebarOpen = ref(false);
 const userStore = useUserStore();
 
 const toggleSidebar = () => {

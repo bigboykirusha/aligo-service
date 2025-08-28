@@ -3,17 +3,20 @@
       <TabsCreateAd />
       <div class="create-ad-form__content">
          <div v-if="activeTab === 1">
-            <CharacteristicsSection />
+            <CategorySection />
          </div>
          <div v-if="activeTab === 2">
-            <OptionsSection />
+            <CharacteristicsSection />
          </div>
          <div v-if="activeTab === 3">
+            <OptionsSection />
+         </div>
+         <div v-if="activeTab === 4">
             <AdSection />
          </div>
       </div>
 
-      <div class="create-ad-form__actions">
+      <div v-if="tabsStore.activeTab !== 1" class="create-ad-form__actions">
          <div class="create-ad-form__overlay">
             <button :disabled="!isSaveandExitEnabled" class="create-ad-form__button create-ad-form__button--save"
                :class="{ 'disabled': props.isPublishing }" @click="saveAndExit">
@@ -21,7 +24,7 @@
                <span v-else>Сохранить и выйти</span>
             </button>
 
-            <button v-if="activeTab === 3" class="create-ad-form__button create-ad-form__button--continue"
+            <button v-if="activeTab === 4" class="create-ad-form__button create-ad-form__button--continue"
                :class="{ 'disabled': props.isSaving }" @click="publishAndExit" :disabled="!isPublishEnabled">
                <span v-if="props.isPublishing" class="spinner"></span>
                <span v-else>Опубликовать</span>
@@ -29,7 +32,7 @@
             <button v-else class="create-ad-form__button create-ad-form__button--continue" @click="continueToNextTab">
                Продолжить
             </button>
-            <div v-if="activeTab === 3" class="create-ad-form__text">
+            <div v-if="activeTab === 4" class="create-ad-form__text">
                Вы также соглашаетесь с <a :href="rulesLink" :download="rulesTitle">{{ rulesTitle }}</a> и публикуете
                информацию,
                которую увидят другие люди
@@ -50,6 +53,7 @@ import AdSection from './AdSection.vue';
 import OptionsSection from './OptionsSection.vue';
 import CharacteristicsSection from './CharacteristicsSection.vue';
 import TabsCreateAd from './TabsCreateAd.vue';
+import CategorySection from './CategorySection.vue';
 
 const createStore = useCreateStore();
 const tabsStore = useTabsStore();
@@ -123,7 +127,7 @@ const publishAndExit = async () => {
 
 const continueToNextTab = () => {
    if (isNextEnabled.value) {
-      if (activeTab.value < 3) {
+      if (activeTab.value < 4 && activeTab.value !== 1) {
          tabsStore.setActiveTab(activeTab.value + 1);
       }
    } else {
@@ -132,14 +136,17 @@ const continueToNextTab = () => {
 };
 
 const isNextEnabled = computed(() => {
-   if (activeTab.value === 1) {
+   if (activeTab.value === 2) {
       return createStore.isCharacteristicFieldsFilled;
+   }
+   if (activeTab.value === 1) {
+      return false;
    }
    return true;
 });
 
 const isPublishEnabled = computed(() => {
-   if (activeTab.value === 3) {
+   if (activeTab.value === 4) {
       return createStore.isAdFieldsFilled;
    }
    return true;
@@ -158,6 +165,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 .create-ad-form {
    display: flex;
+   min-height: calc(100vh - 32px);
    flex-direction: column;
    border-radius: 6px;
    box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.14);
@@ -171,6 +179,7 @@ onMounted(() => {
 
    &__content {
       margin: 16px 24px;
+      height: 100%;
       margin-right: 0;
 
       @media (max-width: 768px) {

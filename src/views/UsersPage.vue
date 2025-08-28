@@ -190,8 +190,8 @@ const filterTableRow = (code, filterType) => {
   }
 };
 
-const handleArrowOptionClick = (_, item) => {
-  router.push(`/user/${item.id.value}/`);
+const handleArrowOptionClick = () => {
+ // router.push(`/user/${item.id.value}/`);
 };
 
 const fetchUsers = async () => {

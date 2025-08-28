@@ -7,6 +7,10 @@
          <AutosTextTemplate label="Цена, ₽" placeholder="Нажмите для ввода" :option="createStore.amount"
             validationType="number" @update:option="(value) => handleFieldUpdate('amount', value)" />
       </div>
+      <BlockTitle text="Местоположение" />
+      <div class="characteristics__content">
+         <CityAutosCreate @updateCity="handleCitySelection" />
+      </div>
       <BlockTitle text="Контакты" />
       <div class="characteristics__content">
          <AutosSelectCreateSkeleton v-if="loading" />
@@ -27,6 +31,7 @@ import AutosTextTemplate from '@/components/CREATEAD/AutosTextTemplate.vue';
 import AutosTextAreaTemplate from '@/components/CREATEAD/AutosTextAreaTemplate.vue';
 import AutosSelectCreateSkeleton from './AutosSelectCreateSkeleton.vue';
 import BlockTitle from './BlockTitle.vue';
+import CityAutosCreate from './CityAutosCreate.vue';
 
 const loading = ref(true);
 const createStore = useCreateStore();

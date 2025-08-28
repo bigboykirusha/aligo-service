@@ -1,5 +1,8 @@
 <template>
    <div class="tabs__title">
+      <button @click="goBack" class="profile__back-button">
+         <img :src="backIcon" alt="Назад" class="profile__back-icon" />
+      </button>
       Новое объявление от имени «{{ userFullName }} #{{ userCode }}»
    </div>
    <div class="tabs">
@@ -37,6 +40,8 @@ import { useCreateStore } from '@/store/create';
 import { getUser } from '@/services/apiClient';
 import { usePopupErrorStore } from '@/store/popupErrorStore';
 import { useRoute } from 'vue-router';
+import backIcon from '@/assets/icons/back-wide.svg';
+import router from '@/router';
 
 const popupErrorStore = usePopupErrorStore();
 const tabsStore = useTabsStore();
@@ -55,6 +60,10 @@ const selectTab = (index) => {
       return;
    }
    tabsStore.setActiveTab(index);
+};
+
+const goBack = () => {
+   router.back();
 };
 
 onMounted(async () => {
@@ -79,6 +88,12 @@ onMounted(async () => {
    padding: 16px 24px;
    background-color: white;
    border-bottom: 1px solid #D6D6D6;
+
+   @media (max-width: 768px) {
+      padding: 0;
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+   }
 }
 
 .tabs__item {
@@ -88,11 +103,19 @@ onMounted(async () => {
 }
 
 .tabs__title {
+   display: flex;
+   align-items: center;
+   gap: 16px;
    font-size: 20px;
    padding-top: 16px;
    padding-left: 24px;
    font-weight: 700;
    color: #003BCE;
+
+   @media (max-width: 768px) {
+      padding: 0;
+      margin-bottom: 8px;
+   }
 }
 
 .tabs__tab {
@@ -169,5 +192,26 @@ onMounted(async () => {
 .fade-scale-leave-to {
    opacity: 0;
    transform: scale(0.8);
+}
+
+.profile__back-button {
+   width: 34px;
+   height: 34px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   background-color: #D6EFFF;
+   border: none;
+   border-radius: 6px;
+   cursor: pointer;
+   transition: background-color 0.3s;
+
+   &:hover {
+      background-color: #A4DCFF;
+   }
+}
+
+.profile__back-icon {
+   width: 14px;
 }
 </style>
