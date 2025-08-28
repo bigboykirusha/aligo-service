@@ -1,0 +1,41 @@
+@keyframes context-menu {
+  0% {
+    transform: translate3d(0, -25px, 0) scale(1.2);
+    filter: blur(5px);
+    opacity: 0;
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+    filter: blur(0px);
+    opacity: 1;
+  }
+}
+
+@keyframes shake {
+  25% {
+    transform: translateX(4px);
+  }
+  50% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+// стандартный transition
+// пример использования
+// .class
+// {
+//  @include transition()
+// }
+@mixin transition($seconds: 0.2s) {
+  transition: $seconds ease;
+}
+
+@mixin hover() {
+  @media (hover: hover) {
+    &:hover {
+      @content;
+    }
+  }
+}

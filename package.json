@@ -1,0 +1,70 @@
+{
+  "name": "frontendadmin",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "@codemirror/lang-xml": "^6.1.0",
+    "@codemirror/theme-one-dark": "github:codemirror/theme-one-dark",
+    "axios": "^1.8.3",
+    "chart.js": "^4.4.9",
+    "codemirror": "^6.0.1",
+    "core-js": "^3.8.3",
+    "date-fns": "^4.1.0",
+    "dompurify": "^3.2.6",
+    "pinia": "^3.0.1",
+    "vue": "^3.2.13",
+    "vue-codemirror": "^6.1.1",
+    "vue-dompurify-html": "^5.2.0",
+    "vue-input-otp": "^0.2.2",
+    "vue-intl": "^6.5.25",
+    "vue-router": "^4.0.3",
+    "vue-the-mask": "^0.11.1",
+    "vue3-cookies": "^1.0.6"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.16",
+    "@babel/eslint-parser": "^7.12.16",
+    "@floating-ui/dom": "^1.6.13",
+    "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-plugin-eslint": "~5.0.0",
+    "@vue/cli-plugin-router": "~5.0.0",
+    "@vue/cli-service": "~5.0.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-vue": "^8.0.3",
+    "lint-staged": "^11.1.2",
+    "lodash.debounce": "^4.0.8",
+    "sass": "^1.32.7",
+    "sass-loader": "^12.0.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/vue3-essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "@babel/eslint-parser"
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ],
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,jsx,vue}": "vue-cli-service lint"
+  }
+}

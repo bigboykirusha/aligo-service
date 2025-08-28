@@ -1,0 +1,147 @@
+.btn {
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+  border: none;
+  max-height: 32px;
+  outline: none;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  position: relative;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.3s ease-in;
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+  @include mq($desctop) {
+    border-radius: 12px;
+    line-height: 18px;
+    font-size: 14px;
+    max-height: 40px;
+    gap: 8px;
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+  @include mq($wd) {
+    max-height: 48px;
+    line-height: 20px;
+    font-size: 16px;
+    gap: 12px;
+  }
+  &--full {
+    padding: 8px 12px 8px 8px;
+    @include mq($desctop) {
+      padding: 12px 20px 12px 12px;
+    }
+    @include mq($wd) {
+      padding: 16px 32px 16px 16px;
+    }
+  }
+  &--text {
+    padding: 8px 20px;
+    @include mq($desctop) {
+      padding: 12px 24px;
+    }
+    @include mq($wd) {
+      padding: 16px 32px;
+    }
+  }
+  &--svg {
+    padding: 6px;
+    @include mq($desctop) {
+      padding: 8px;
+    }
+    @include mq($wd) {
+      padding: 10px;
+    }
+  }
+  &--primary {
+    background-color: var(--primary);
+
+    color: var(--of-white);
+    @media (hover: hover) {
+      &:hover {
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+      }
+    }
+    &:focus {
+      outline: 1px solid var(--primary-hover);
+    }
+    &:active {
+      background-color: var(--primary-hover);
+    }
+    svg {
+      fill: var(--primary);
+      path {
+        stroke: var(--of-white);
+      }
+    }
+  }
+  &--second {
+    background-color: var(--orange-2);
+
+    color: var(--primary);
+
+    svg {
+      fill: var(--orange-2);
+      path {
+        stroke: var(--primary);
+      }
+    }
+    &:focus {
+      outline: 1px solid var(--primary);
+    }
+    &:active {
+      background-color: var(--orange-3);
+      color: var(--of-white);
+      svg {
+        fill: var(--orange-3);
+        path {
+          stroke: var(--of-white);
+        }
+      }
+    }
+    @media (hover: hover) {
+      &:hover {
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+      }
+    }
+  }
+  &--third {
+    color: var(--primary);
+    background-color: transparent;
+    svg {
+      fill: none;
+      path {
+        stroke: var(--primary);
+      }
+    }
+    @media (hover: hover) {
+      &:hover {
+        background-color: transparent;
+      }
+    }
+    &:focus {
+      outline: 1px solid var(--primary);
+    }
+  }
+  &--disabled {
+    background-color: var(--disabled);
+    color: var(--sub-text);
+
+    svg {
+      fill: var(--disabled);
+      path {
+        stroke: var(--sub-text);
+      }
+    }
+  }
+}

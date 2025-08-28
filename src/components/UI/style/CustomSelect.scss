@@ -1,0 +1,228 @@
+.ui-select {
+  position: relative;
+  min-width: 270px;
+  background-color: var(--white);
+
+  &__text {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    color: var(--color-text-select);
+  }
+  &::before {
+    pointer-events: none;
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    z-index: 1;
+    content: '';
+    width: 11px;
+    height: 11px;
+    background: url('/src/assets/images/svg/arrow.svg') center center / contain
+      no-repeat;
+    transform: translate(0, -50%);
+    transition: opacity 0.2s ease;
+  }
+  // assets/images/svg/arrow.svg
+  &__label {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    height: 34px;
+    border-radius: 6px;
+    border: 1px solid var(--color-stroke);
+    &--active {
+      background-color: var(--white);
+      color: var(--color-text-select);
+      border: 1px solid var(--color-stroke);
+      .ui-select__label-text {
+        color: #050721;
+      }
+    }
+  }
+  &__label-arrow {
+    position: fixed;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+
+    // path {
+    //   stroke: var(--primary);
+    // }
+  }
+  &__label-text {
+    display: flex;
+    gap: 3px;
+    color: var(--color-text-select);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    margin: 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
+
+    @include mq($tablet) {
+      font-size: 13px;
+      line-height: 18px;
+    }
+  }
+  &__options {
+    position: absolute;
+    padding: 0;
+    margin-top: 0;
+    width: 100%;
+    z-index: 6;
+    max-height: 150px;
+    overflow: hidden;
+    background-color: var(--white);
+    border-top: unset;
+    left: 0;
+
+    transition: opacity 0.2s ease;
+
+    &-enter-active,
+    &-leave-active {
+      color: var(--color-text-select);
+      opacity: 1;
+      visibility: visible;
+    }
+    &-enter,
+    &-leave-to {
+      opacity: 0;
+      visibility: hidden;
+      max-height: 0;
+    }
+  }
+  &__option {
+    position: relative;
+    display: flex;
+    gap: 2px;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    padding: 15px 0 15px 13px;
+    color: var(--color-text-select);
+    transition: opacity 0.2s ease;
+    cursor: pointer;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    &:hover {
+      background-color: #d6efff;
+      color: var(--primary);
+    }
+    &--active {
+      background-color: #d6efff;
+      color: var(--primary);
+    }
+    &--impossible {
+      pointer-events: none;
+      font-weight: 600;
+      color: var(--sub-text);
+    }
+  }
+
+  &--open {
+    // .ui-select__label {
+    //   background-color: var(--white);
+    //   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    // }
+    &.ui-select--top {
+      .ui-select__options {
+        border-radius: 6px 6px 0 0;
+        border: 1px solid var(--primary);
+        border-bottom: 1px solid var(--color-stroke);
+      }
+      .ui-select__label {
+        border-radius: 0 0 6px 6px;
+        border: 1px solid var(--primary);
+        border-top: 1px solid var(--color-stroke);
+      }
+    }
+    .ui-select__label-text {
+      color: var(--color-text-select);
+    }
+    .ui-select__options {
+      border-radius: 0 0 6px 6px;
+      border: 1px solid var(--primary);
+      border-top: 1px solid var(--color-stroke);
+    }
+    .ui-select__label {
+      border-radius: 6px 6px 0 0;
+      border: 1px solid var(--primary);
+      border-bottom: 1px solid var(--color-stroke);
+    }
+
+    &.ui-select::before {
+      transform: translate(0, -50%) rotate(-180deg);
+    }
+  }
+
+  &--scroll {
+    .ui-select__options {
+      overflow: auto;
+      /* Стили для плашки скроллбара */
+
+      &::-webkit-scrollbar {
+        background-color: var(--color-stroke);
+        border-radius: 4px;
+        width: 5px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: var(--primary);
+        border-radius: 4px;
+        height: 30px;
+      }
+      // Для Firefox
+      @-moz-document url-prefix() {
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary) var(--color-stroke);
+      }
+    }
+  }
+  &--error {
+    .ui-select__label {
+      border: 1px solid #ff5959;
+    }
+    .ui-select__label-text {
+      color: #ff5959;
+    }
+    .ui-select__text {
+      color: #ff5959;
+    }
+    .ui-select__label-arrow {
+      .path {
+        stroke: #ff5959;
+      }
+    }
+  }
+  &--success {
+    .ui-select__label {
+      border: 1px solid var(--success);
+    }
+    .ui-select__label-text {
+      color: var(--success);
+    }
+    .ui-select__text {
+      color: var(--success);
+    }
+    .ui-select__label-arrow {
+      .path {
+        stroke: var(--success);
+      }
+    }
+  }
+  &--disabled {
+    pointer-events: none;
+    color: var(--color-text-select);
+    &:hover {
+      background-color: var(--color-stroke);
+      color: var(--color-text-select);
+    }
+    .ui-select::before {
+      background: none;
+    }
+  }
+}

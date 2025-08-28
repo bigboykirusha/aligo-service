@@ -1,0 +1,213 @@
+.ui-textarea {
+  width: 100%;
+  &__box {
+    position: relative;
+    display: block;
+  }
+  &__label {
+    position: absolute;
+    top: 23px;
+    left: 12px;
+    line-height: 14px;
+    // font-family: $accent-font;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    transform: translateY(-50%);
+    font-size: 14px;
+    line-height: 18px;
+    color: var(--primary);
+
+    @include mq($desctop) {
+      font-size: 14px;
+      line-height: 18px;
+    }
+    @include transition();
+  }
+  &__text {
+    display: flex;
+    padding-top: 2px;
+    line-height: 16px;
+    span {
+      //   font-family: $accent-font;
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--color-explain);
+      @include mq($desctop) {
+        font-size: 12px;
+        line-height: 16px;
+      }
+    }
+  }
+  &__field {
+    // font-family: $accent-font;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 18px;
+    background-color: var(--white);
+    color: var(--text);
+
+    min-height: 50px;
+    max-height: calc(18px * 23); /* Максимальная высота для 5 строк */
+    padding: 5px 10px 10px 10px;
+    border: 1px solid var(--color-stroke);
+    border-radius: 6px;
+    box-sizing: border-box;
+    width: 100%;
+    resize: none;
+    display: block;
+    white-space: pre-wrap;
+    &::placeholder {
+      color: rgba(44, 44, 44, 0.4);
+    }
+    @include mq($desctop) {
+      font-size: 14px;
+      line-height: 18px;
+      padding: 5px 10px 10px 10px;
+    }
+    @include transition();
+
+    &::placeholder {
+      color: rgba(44, 44, 44, 0.4);
+    }
+
+    &:not(:disabled) {
+      &:focus,
+      &:hover {
+        outline: none;
+      }
+    }
+
+    &:disabled {
+      color: var(--sub-text);
+    }
+  }
+  &__icon {
+    position: absolute;
+    display: flex;
+    width: 20px;
+    height: 20px;
+    align-items: center;
+    transform: translateY(-50%);
+    top: 20px;
+    right: 10px;
+    @include mq($desctop) {
+      width: 24px;
+      height: 24px;
+      right: 12px;
+    }
+  }
+  &__status-icon {
+    position: absolute;
+    left: 15px;
+    top: 11px;
+  }
+  // &__icon-decor {
+  //   position: absolute;
+  //   right: 10px;
+  //   bottom: 10px;
+  // }
+  &--with-label {
+    .ui-textarea__field {
+      padding-top: 24px;
+    }
+  }
+
+  &--error {
+    animation: shake 0.2s ease-in-out 0s 2;
+
+    .ui-textarea__field {
+      border: 1px solid #ff5959;
+      color: var(--text-main);
+
+      &::placeholder {
+        color: #ff5959;
+      }
+
+      &:not(:disabled) {
+        &:focus,
+        &:hover {
+          border: 1px solid #ff5959;
+        }
+      }
+    }
+    .ui-textarea__text span {
+      color: #ff5959;
+    }
+    .ui-textarea__label {
+      color: #ff5959;
+    }
+    .ui-textarea__icon {
+      svg {
+        fill: none;
+        path {
+          stroke: #ff5959;
+        }
+      }
+    }
+  }
+  // &--success {
+  //   .ui-textarea__field {
+  //     border: 2px solid var(--success);
+  //     color: var(--text);
+
+  //     &::placeholder {
+  //       color: var(--success);
+  //     }
+
+  //     &:not(:disabled) {
+  //       &:focus,
+  //       &:hover {
+  //         border: 2px solid var(--success);
+  //       }
+  //     }
+  //   }
+  //   .ui-textarea__text span {
+  //     color: var(--success);
+  //   }
+  //   .ui-textarea__label {
+  //     color: var(--success);
+  //   }
+  //   .ui-textarea__icon {
+  //     svg {
+  //       fill: none;
+  //       path {
+  //         stroke: var(--success);
+  //       }
+  //     }
+  //   }
+  // }
+  &--status {
+    .ui-textarea__field {
+      padding: 19px 30px 4px 45px;
+    }
+    .ui-textarea__label {
+      left: 45px;
+    }
+  }
+  &--disabled {
+    .ui-textarea__field {
+      background-color: var(--text);
+      border: none;
+      color: var(--text-main);
+    }
+    .ui-textarea__label {
+      color: var(--text-main);
+    }
+  }
+  &--empty {
+    .ui-textarea__field {
+      color: var(--text-main);
+    }
+  }
+}
+.ui-textarea .ui-textarea__field:focus ~ .ui-textarea__label,
+.ui-textarea--label-on-top .ui-textarea__label {
+  font-size: 10px;
+  line-height: 16px;
+  margin-top: -9px;
+  @include mq($desctop) {
+    font-size: 12px;
+    line-height: 16px;
+  }
+}

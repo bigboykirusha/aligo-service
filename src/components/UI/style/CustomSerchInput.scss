@@ -1,0 +1,254 @@
+.ui-input-serch {
+  &__box {
+    position: relative;
+    display: block;
+    min-width: 196px;
+  }
+
+  &__field {
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 18px;
+    background-color: var(--white);
+    color: var(--text-main);
+    height: 34px;
+    padding: 12px 32px 12px 12px;
+    border: 1px solid var(--color-stroke);
+    border-radius: 4px;
+    outline: none;
+    box-sizing: border-box;
+    width: 100%;
+
+    &:focus {
+      border: 1px solid var(--primary);
+    }
+
+    &[type='password'] {
+      -webkit-text-security: disc;
+      -moz-text-security: disc;
+      font-size: 25px;
+      color: var(--primary);
+    }
+
+    @include mq($desctop) {
+      font-size: 14px;
+      line-height: 18px;
+    }
+
+    @include transition();
+
+    &::placeholder {
+      color: rgba(44, 44, 44, 0.4);
+    }
+
+    &:disabled {
+      color: var(--sub-text);
+    }
+  }
+
+  &__text {
+    display: flex;
+    padding-top: 2px;
+    line-height: 16px;
+
+    span {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--sub-text);
+
+      @include mq($desctop) {
+        font-size: 12px;
+        line-height: 16px;
+      }
+    }
+  }
+
+  &__label {
+    position: absolute;
+    top: 23px;
+    right: 12px;
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: 500;
+    color: var(--primary);
+    transform: translateY(-50%);
+
+    @include mq($desctop) {
+      font-size: 14px;
+      line-height: 18px;
+    }
+
+    @include transition();
+  }
+
+  &__status-icon {
+    position: absolute;
+    right: 15px;
+    top: 11px;
+  }
+
+  &__icon {
+    position: absolute;
+    display: flex;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    border-radius: 0 3px 3px 0;
+    align-items: center;
+    justify-content: center;
+    top: 50%;
+    right: 1px;
+    transform: translateY(-50%);
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: #d6efff;
+    }
+
+    svg {
+      width: 14px;
+      height: 14px;
+
+      path {
+        stroke: var(--primary);
+      }
+    }
+
+    &--active {
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      border-radius: 0 3px 3px 0;
+      background-color: var(--primary);
+
+      &:hover {
+        background-color: #144df8;
+      }
+
+      svg path {
+        stroke: var(--white);
+      }
+    }
+  }
+
+  &__icon-clear {
+    position: absolute;
+    display: flex;
+    width: 12px;
+    height: 12px;
+    align-items: center;
+    top: 50%;
+    right: 40px;
+    transform: translateY(-50%);
+
+    svg {
+      fill: none;
+
+      path {
+        stroke: var(--primary);
+      }
+    }
+  }
+
+  &--with-label {
+    .ui-input-serch__field {
+      padding-top: 24px;
+    }
+  }
+
+  &--error {
+    animation: shake 0.2s ease-in-out 0s 2;
+
+    .ui-input-serch__field {
+      border: 1px solid #ff5959;
+      color: var(--text-main);
+
+      &::placeholder {
+        color: #ff5959;
+      }
+
+      &:not(:disabled):focus,
+      &:not(:disabled):hover {
+        border: 1px solid #ff5959;
+      }
+    }
+
+    .ui-input-serch__text span,
+    .ui-input-serch__label {
+      color: #ff5959;
+    }
+
+    .ui-input-serch__icon svg path {
+      stroke: #ff5959;
+    }
+  }
+
+  &--success {
+    .ui-input-serch__field {
+      border: 1px solid #3bbc71;
+      color: var(--text-main);
+
+      &::placeholder {
+        color: #3bbc71;
+      }
+
+      &:not(:disabled):focus,
+      &:not(:disabled):hover {
+        border: 1px solid #3bbc71;
+      }
+    }
+
+    .ui-input-serch__text span,
+    .ui-input-serch__label {
+      color: #3bbc71;
+    }
+
+    .ui-input-serch__icon svg path {
+      stroke: #3bbc71;
+    }
+  }
+
+  &--status {
+    .ui-input-serch__field {
+      padding: 19px 30px 4px 45px;
+    }
+
+    .ui-input-serch__label {
+      left: 45px;
+    }
+  }
+
+  &--disabled {
+    .ui-input-serch__field {
+      background-color: var(--text-main);
+      border: none;
+      color: var(--color-explain);
+    }
+
+    .ui-input-serch__label {
+      color: var(--color-explain);
+    }
+  }
+
+  &--empty {
+    .ui-input-serch__field {
+      background-color: var(--white);
+    }
+  }
+
+  &--highlighted {
+    box-shadow: 0 0 16px 1px #d1f5ff;
+  }
+
+  &--label-on-top .ui-input-serch__label,
+  &__field:focus ~ .ui-input-serch__label {
+    font-size: 10px;
+    line-height: 16px;
+    margin-top: -9px;
+
+    @include mq($desctop) {
+      font-size: 12px;
+      line-height: 16px;
+    }
+  }
+}

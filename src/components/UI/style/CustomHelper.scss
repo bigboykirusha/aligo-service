@@ -1,0 +1,65 @@
+.ui-helper {
+  position: relative;
+  &__svg-wrapper {
+    display: inline-block;
+  }
+  // svg {
+  //   stroke: var(--of-white);
+  //   width: 16px;
+  //   height: 16px;
+  // }
+  &__description {
+    position: fixed;
+    width: 260px;
+    max-height: 400px;
+    overflow-y: auto;
+    height: auto;
+    padding: 16px;
+    border-radius: 6px;
+    z-index: 6;
+    background-color: var(--white);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+
+    @include mq($large) {
+      width: 280px;
+      padding: 24px;
+    }
+  }
+  &__svg-box {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    z-index: 1;
+    // svg {
+    //   stroke: var(--primary);
+    //   path {
+    //     stroke: var(--primary);
+    //   }
+    // }
+  }
+  &__title {
+    color: var(--text-main);
+    margin-bottom: 8px;
+    font-weight: 700;
+    margin-top: 0;
+  }
+  &__text {
+    color: var(--text-main);
+    font-weight: 500;
+    &--box {
+      margin-top: 12px;
+    }
+    &--list {
+      padding-left: 20px;
+      list-style: disc;
+    }
+  }
+  &__inform-link {
+    display: flex;
+    align-items: center;
+    color: var(--primary);
+  }
+}

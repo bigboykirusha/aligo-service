@@ -1,0 +1,50 @@
+.toast {
+  padding: 10px;
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  background-color: var(--primary);
+
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+  &__text {
+    color: var(--white);
+  }
+
+  &--error {
+    background-color: var(--color-error);
+    color: var(--text-main);
+  }
+
+  &--success {
+    background-color: var($color-agree);
+    color: var(--text-main);
+  }
+}
+/* Анимация появления */
+
+.toast-enter-from {
+  transform: translateX(100%);
+  opacity: 0;
+}
+.toast-enter-to {
+  transform: translateX(0);
+  opacity: 1;
+}
+.toast-enter-active {
+  transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+}
+
+/* Анимация исчезновения */
+.toast-leave-from {
+  transform: translateX(0);
+  opacity: 1;
+}
+.toast-leave-to {
+  transform: translateX(100%);
+  opacity: 0;
+}
+.toast-leave-active {
+  transition: transform 0.5s ease-in, opacity 0.5s ease-in;
+}

@@ -1,0 +1,50 @@
+.ui-accordion {
+  &__head-icon-text {
+    color: var(--primary);
+  }
+  &__head-icon {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  &__head {
+    cursor: pointer;
+    padding: 16px 8px;
+    transition: 500ms;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  &__items {
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    border-bottom: 1px solid var(--color-block);
+    transition: 500ms;
+
+    &.active {
+      padding-bottom: 32px;
+      max-height: 1000px;
+    }
+  }
+  &__item {
+    cursor: pointer;
+    @include transition();
+
+    //   &:hover {
+    //     color: var(--white);
+    //   }
+  }
+  &__arrow {
+    transform: rotate(90deg);
+    @include transition();
+    &--top {
+      transform: rotate(-90deg);
+    }
+  }
+}
