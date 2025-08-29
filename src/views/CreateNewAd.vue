@@ -11,7 +11,6 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
 import { useCreateStore } from '@/store/create.js';
-import { useUserStore } from '@/store/user.js';
 import { useTabsStore } from '@/store/tabsStore.js';
 import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router';
 import { useCookies } from 'vue3-cookies';
@@ -20,7 +19,6 @@ import CreateAdForm from '@/components/CREATEAD/CreateAdForm.vue';
 
 // Инициализация стора и роутинга
 const createStore = useCreateStore();
-const userStore = useUserStore();
 const tabsStore = useTabsStore();
 const router = useRouter();
 const route = useRoute();
@@ -49,7 +47,7 @@ const handleSendAd = async () => {
       console.error('Ошибка отправки объявления:', error);
    } finally {
       setTimeout(() => {
-         router.push('/');
+         router.push('/autos/');
          isPublishing.value = false;
       }, 500);
    }
@@ -65,7 +63,7 @@ const saveAd = async () => {
       console.error('Ошибка при сохранении объявления:', error);
    } finally {
       setTimeout(() => {
-         router.push('/');
+         router.push('/autos/');
          isSaving.value = false;
       }, 500);
    }
@@ -90,7 +88,6 @@ const discardAd = () => {
 const resetState = () => {
    createStore.resetParams();
    tabsStore.resetTabs();
-   userStore.fetchUserCounts();
    isPopupVisible.value = false;
 };
 

@@ -3,12 +3,12 @@ const { DefinePlugin } = require('webpack');
 const path = require('path');
 
 module.exports = defineConfig({
-  publicPath: process.env.NODE_ENV === 'production' ? '/nexuilezt/' : '/',
-  outputDir: path.resolve(__dirname, 'nexuilezt'),
+  publicPath: '/',
+  outputDir: path.resolve(__dirname, 'dist'),
   configureWebpack: {
     resolve: {
       alias: {
-        '@': require('path').resolve(__dirname, 'src'),
+        '@': path.resolve(__dirname, 'src'),
       },
     },
     plugins: [

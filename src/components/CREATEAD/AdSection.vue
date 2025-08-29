@@ -10,6 +10,10 @@
       <BlockTitle text="Местоположение" />
       <div class="characteristics__content">
          <CityAutosCreate @updateCity="handleCitySelection" />
+         <AutosAddressInput label="Место осмотра"
+            @update:address="(value) => handleFieldUpdate('place_inspection', value)"
+            :option="createStore.place_inspection" />
+
       </div>
       <BlockTitle text="Контакты" />
       <div class="characteristics__content">
@@ -30,12 +34,19 @@ import AutosSelectCreate from '@/components/CREATEAD/AutosSelectCreate.vue';
 import AutosTextTemplate from '@/components/CREATEAD/AutosTextTemplate.vue';
 import AutosTextAreaTemplate from '@/components/CREATEAD/AutosTextAreaTemplate.vue';
 import AutosSelectCreateSkeleton from './AutosSelectCreateSkeleton.vue';
+import AutosAddressInput from './AutosAddressInput.vue';
 import BlockTitle from './BlockTitle.vue';
 import CityAutosCreate from './CityAutosCreate.vue';
 
 const loading = ref(true);
 const createStore = useCreateStore();
 const CommunicationMethodOptions = ref([]);
+
+const handleCitySelection = (value) => {
+   createStore.setField('city_id', value.id);
+   createStore.setField('city_name', value.title);
+};
+
 
 const handleFieldUpdate = (field, value) => {
    createStore.setField(field, value);

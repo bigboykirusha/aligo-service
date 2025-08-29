@@ -19,7 +19,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, defineEmits, defineProps } from 'vue';
 import { useCreateStore } from '@/store/create';
-import { debounce } from 'lodash-es';
+import { debounce } from 'lodash';
 import { fetchSuggestions } from '@/services/apiLocation';
 import closeIcon from '@/assets/icons/close-gray.svg';
 

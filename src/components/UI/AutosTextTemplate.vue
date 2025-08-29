@@ -1,30 +1,16 @@
 <template>
-  <div
-    class="simple-input"
-    :class="{ 'simple-input--special': props.isSpecial }"
-  >
+  <div class="simple-input" :class="{ 'simple-input--special': props.isSpecial }">
     <label v-if="label" class="simple-input__label">{{ label }}</label>
     <div class="simple-input__wrapper">
-      <input
-        type="text"
-        :inputmode="
-          props.validationType === 'number' || props.validationType === 'doors'
-            ? 'numeric'
-            : null
-        "
-        class="simple-input__field"
-        :class="{
+      <input type="text" :inputmode="props.validationType === 'number' || props.validationType === 'doors'
+          ? 'numeric'
+          : null
+        " class="simple-input__field" :class="{
           'simple-input__field--error': shouldShowError,
           'simple-input__field--success': shouldShowSuccess,
           'simple-input__field--highlighted': isHighlighted,
-        }"
-        :placeholder="placeholder"
-        v-model="displayValue"
-        :disabled="isInputDisabled"
-        @blur="handleBlur"
-        @focus="handleFocus"
-        @keypress="restrictNonNumericInput"
-      />
+        }" :placeholder="placeholder" v-model="displayValue" :disabled="isInputDisabled" @blur="handleBlur"
+        @focus="handleFocus" @keypress="restrictNonNumericInput" />
       <!-- <img
           v-if="optionValue && showClearIcon"
           src="../assets/icons/close-gray.svg"
@@ -66,12 +52,6 @@ const props = defineProps({
     default: false,
   },
 });
-/*
-Исправить
-перегруженный инпут в нем слишком много всего он по сути должен получать значение и возвращать
-а родитель валидировать и давать ему состояние с текстом ошибки и ошибкой  компонент custimInput
-влидация происходит в useValidate
-*/
 const emit = defineEmits(['update:option']);
 const optionValue = ref(props.option ? String(props.option).trim() : '');
 const hasInput = ref(false);
@@ -120,6 +100,18 @@ const isValid = computed(() => {
       return /^(https?:\/\/)?([\w\d\-_]+(\.[\w\d\-_]+)+)(\/[\w\d\-._~:/?#[@!$&'()*+,;=]*)?$/.test(
         optionValue.value
       );
+    case 'autoId': {
+      const value = optionValue.value.toUpperCase();
+
+      // VIN всегда ровно 17 символов
+      if (value.length === 17) {
+        return validateVIN(value);
+      }
+
+      // Госномер — от 8 до 9 символов (например: А123ВС77 или А123ВС777)
+      const licensePlateRegex = /^[АВЕКМНОРСТУХABEKMHOPCTYX]\d{3}[АВЕКМНОРСТУХABEKMHOPCTYX]{2}\d{2,3}$/;
+      return licensePlateRegex.test(value);
+    }
     case 'doors': {
       const numberValue = Number(optionValue.value);
       return (
@@ -249,11 +241,6 @@ const handleBlur = () => {
 const handleFocus = () => {
   isErrorDisplayed.value = false;
 };
-
-// const clearInput = () => {
-//   optionValue.value = '';
-//   hasInput.value = false;
-// };
 
 watch(
   () => optionValue.value,

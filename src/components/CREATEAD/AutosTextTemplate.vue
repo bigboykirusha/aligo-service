@@ -113,8 +113,10 @@ const isValid = computed(() => {
          return !isNaN(optionValue.value) && Number(optionValue.value) > 0;
       case 'email':
          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(optionValue.value);
-      case 'doors':
-         return Number.isInteger(optionValue.value) && optionValue.value >= 2 && optionValue.value <= 12;
+      case 'doors': {
+         const doors = Number(optionValue.value);
+         return Number.isInteger(doors) && doors >= 2 && doors <= 12;
+      }
       case 'vin':
          return validateVIN(optionValue.value);
       case 'licensePlate':

@@ -157,7 +157,7 @@ onUnmounted(() => {
          width: 11px;
          height: 11px;
          background: url('@/assets/images/svg/arrow.svg') center center / contain no-repeat;
-         transform: translate(0, -50%) rotate(90deg);
+         transform: translate(0, -50%);
          transition: transform 0.2s ease;
       }
 

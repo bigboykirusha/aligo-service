@@ -151,7 +151,6 @@ export const useCreateStore = defineStore('create', {
             state.color_ids.length > 0,
             state.country_id,
             hasRegistrationField,
-            ...(state.country_id !== 1 ? [state.state_number] : []),
             ...(state.condition_id == 2 ? [state.state_id] : []),
             state.brand_id,
             state.model_id,
@@ -170,9 +169,6 @@ export const useCreateStore = defineStore('create', {
       },
       isAdFieldsFilled: (state) => {
          return [
-            state.username,
-            state.email,
-            state.phone,
             state.ads_description,
             state.place_inspection,
             state.communication_method_id,

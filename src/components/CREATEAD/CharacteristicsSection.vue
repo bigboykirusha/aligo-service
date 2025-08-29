@@ -1,14 +1,11 @@
 <template>
    <div class="characteristics">
       <div class="characteristics__content">
-         <BlockTitle text="Категория*" />
+         <BlockTitle text="Внешний вид*" />
          <SwitcherCreateSkeleton v-if="loading" />
          <AutosSwitcherCreate v-else :options="conditionIdOptions" label="Состояние"
             @updateSelected="(value) => handleFieldUpdate('condition_id', value)"
             :activeIndex="createStore.condition_id" />
-      </div>
-      <div class="characteristics__content">
-         <BlockTitle text="Внешний вид*" />
          <PhotoUploader label="Фотографии (до 10 шт)" :photos="createStore.photos"
             @updatePhotos="(photos) => handleFieldUpdate('photos', photos)" />
          <AutosSelectCreateSkeleton v-if="loading" />
@@ -24,12 +21,9 @@
          <AutosSelectCreate v-else label="Страна регистрации*" :initialSelectedOption="createStore.country_id"
             :options="countryOptions" @updateSort="(value) => handleFieldUpdate('country_id', value)" />
          <TextSkeleton v-if="loading" />
-         <AutosTextTemplate v-else label="VIN или номер кузова*" placeholder="Нажмите для ввода"
-            :option="createStore.vin" @update:option="(value) => handleFieldUpdate('vin', value)"
-            validationType="vin" />
+         <AutosTextTemplate v-else label="VIN / Государственный номер*" placeholder="Нажмите для ввода"
+            :option="createStore.vin" @update:option="(value) => handleAutoIdUpdate(value)" validationType="autoId" />
          <TextSkeleton v-if="loading" />
-         <AutosStateNumber v-show="showStateNumber" label="Государственный номер" placeholder="Нажмите для ввода"
-            :option="createStore.state_number" @update:option="(value) => handleFieldUpdate('state_number', value)" />
       </div>
       <div class="characteristics__content">
          <BlockTitle text="Технические характеристики*" />
@@ -116,7 +110,6 @@ import AutosTextTemplate from '@/components/CREATEAD/AutosTextTemplate.vue';
 import AutosSelectCreate from '@/components/CREATEAD/AutosSelectCreate.vue';
 import AutosSwitcherCreate from '@/components/CREATEAD/AutosSwitcherCreate.vue';
 import AutosSelectColor from '@/components/CREATEAD/AutosSelectColor.vue';
-import AutosStateNumber from '@/components/CREATEAD/AutosStateNumber.vue';
 import SimpleCheckboxTemplate from '@/components/CREATEAD/SimpleCheckboxTemplate.vue';
 import SwitcherCreateSkeleton from '@/components/CREATEAD/SwitcherCreateSkeleton.vue';
 import AutosSelectCreateSkeleton from '@/components/CREATEAD/AutosSelectCreateSkeleton.vue';
@@ -149,8 +142,6 @@ const PtsOptions = ref([]);
 const isModelsDropdownDisabled = computed(() => !createStore.brand_id);
 const isGenerationDropdownDisabled = computed(() => !createStore.model_id);
 const isEquipmentDropdownDisabled = computed(() => !createStore.generation_id);
-
-const showStateNumber = computed(() => createStore.country_id !== null && createStore.country_id !== 1);
 const showUsedOptions = computed(() => createStore.condition_id !== 1);
 
 const fetchOptions = async () => {
@@ -193,6 +184,24 @@ const fetchOptions = async () => {
 
 const handleFieldUpdate = (field, value) => {
    createStore.setField(field, value);
+};
+
+const handleAutoIdUpdate = (value) => {
+   if (!value) {
+      createStore.setField('vin', null);
+      createStore.setField('state_number', null);
+      return;
+   }
+
+   const cleaned = value.trim().toUpperCase();
+
+   if (cleaned.length === 17) {
+      createStore.setField('vin', cleaned);
+      createStore.setField('state_number', null);
+   } else {
+      createStore.setField('state_number', cleaned);
+      createStore.setField('vin', null);
+   }
 };
 
 const fetchMarksDropdownOptions = async () => {
