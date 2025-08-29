@@ -63,7 +63,7 @@ const selectTab = (index) => {
 };
 
 const goBack = () => {
-   router.back();
+   router.push('/users/');
 };
 
 onMounted(async () => {

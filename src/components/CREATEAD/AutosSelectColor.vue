@@ -1,276 +1,255 @@
 <template>
-   <div class="address-input">
-      <label v-if="label" class="address-input__label">{{ label }}</label>
-      <div class="address-input__wrapper">
-         <input type="text" class="address-input__field" :class="{ 'address-input__field--error': shouldShowError }"
-            :placeholder="placeholder" v-model="inputValue" @input="handleInput" @keydown.enter.prevent="handleEnterKey"
-            @focus="handleFocus" @blur="handleBlur" />
-         <img v-if="inputValue" :src="closeIcon" alt="Clear" class="address-input__clear" @click="clearInput" />
-         <ul v-if="suggestions.length" class="address-input__suggestions">
-            <li v-for="(suggestion, index) in suggestions" :key="index" class="address-input__suggestion"
-               @click="selectSuggestion(suggestion)">
-               {{ suggestion.fullAddress }}
-            </li>
-         </ul>
+   <div class="dropdown-2" :class="{ 'dropdown-2--active': isActive, 'dropdown-2--disabled': disabled }" ref="dropdown">
+      <div class="dropdown-2__label">{{ label }}</div>
+      <div class="dropdown-2__input" @click="activateDropdown" :class="{ 'dropdown-2__input--disabled': disabled }">
+         <div class="input-text-2 input-text-2--with-clear input-wrapper --check-fill">
+            <input class="input-text-2__input" type="text" v-model="searchQuery" placeholder="Нажмите для выбора"
+               :disabled="disabled" @input="filterOptions" @focus="activateDropdown" />
+         </div>
       </div>
+      <ul class="dropdown-2__list" v-if="isActive">
+         <li v-for="option in filteredOptions" :key="option.id" class="dropdown-2__list-item"
+            :class="{ 'dropdown-2__list-item--selected': selectedOption === option.id }" @click="selectOption(option)">
+            {{ capitalize(option.title) }}
+         </li>
+      </ul>
    </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, defineEmits, defineProps } from 'vue';
-import { useCreateStore } from '@/store/create';
-import { debounce } from 'lodash';
-import { fetchSuggestions } from '@/services/apiLocation';
-import closeIcon from '@/assets/icons/close-gray.svg';
+import { ref, computed, watch, onMounted, onUnmounted, defineProps, defineEmits } from 'vue';
 
 const props = defineProps({
-   label: String,
-   placeholder: {
-      type: String,
-      default: 'Введите адрес',
+   options: {
+      type: Array,
+      required: true,
    },
-   option: {
+   label: {
       type: String,
+      default: '',
+   },
+   disabled: {
+      type: Boolean,
+      default: false,
+   },
+   initialSelectedOption: {
+      type: Array,
+      default: () => [],
    },
 });
 
-const emit = defineEmits(['update:address']);
+const emit = defineEmits(['updateSort']);
+const selectedOption = ref(props.initialSelectedOption.length ? props.initialSelectedOption[0] : null);
+const isActive = ref(false);
+const searchQuery = ref('');
+const hasUserTyped = ref(false);
 
-const inputValue = ref(props.option);
-const suggestions = ref([]);
-const isSuggestionSelected = ref(true);
-const isFocused = ref(false);
-
-const country = ref('');
-const city = ref('');
-const street = ref('');
-const latitude = ref(null);
-const longitude = ref(null);
-
-const createStore = useCreateStore();
-
-const fetchSuggestionsData = async (query) => {
-   try {
-      suggestions.value = await fetchSuggestions(query);
-   } catch (error) {
-      console.error('Ошибка получения предложений:', error);
-   }
-};
-
-const debouncedFetchSuggestions = debounce(fetchSuggestionsData, 300);
-
-const handleInput = () => {
-   isSuggestionSelected.value = false;
-
-   if (inputValue.value.length > 3) {
-      emit('update:address', inputValue.value);
-      debouncedFetchSuggestions(inputValue.value);
-   } else {
-      suggestions.value = [];
-   }
-};
-
-const selectSuggestion = (suggestion) => {
-   inputValue.value = suggestion.fullAddress;
-   suggestions.value = [];
-   isSuggestionSelected.value = true;
-
-   parseAddress(suggestion.geoObject);
-
-   if (latitude.value && longitude.value) {
-      createStore.setField('latitude', latitude.value);
-      createStore.setField('longitude', longitude.value);
-   }
-
-   emit('update:address', inputValue.value);
-};
-
-const shouldShowError = computed(() => {
-   return !isSuggestionSelected.value && inputValue.value.length > 0 && !isFocused.value;
+const sortedOptions = computed(() => {
+   return (props.label === 'Год выпуска' || props.label === 'Шины и диски')
+      ? [...props.options].reverse()
+      : props.options;
 });
 
-const confirmAddress = () => {
-
-   if (latitude.value && longitude.value) {
-      createStore.setField('latitude', latitude.value);
-      createStore.setField('longitude', longitude.value);
-   }
-
-   emit('update:address', inputValue.value);
-};
-
-const parseAddress = (geoObject) => {
-   const components = geoObject.metaDataProperty.GeocoderMetaData.Address.Components;
-
-   country.value = '';
-   city.value = '';
-   street.value = '';
-   latitude.value = geoObject.Point.pos.split(' ')[1];
-   longitude.value = geoObject.Point.pos.split(' ')[0];
-
-   components.forEach((component) => {
-      switch (component.kind) {
-         case 'country':
-            country.value = component.name;
-            break;
-         case 'locality':
-         case 'province':
-            city.value = component.name;
-            break;
-         case 'street':
-            street.value = component.name;
-            break;
-      }
-   });
-
-   if (!city.value && geoObject.description) {
-      const descriptionParts = geoObject.description.split(', ');
-      city.value = descriptionParts[0];
+const activateDropdown = () => {
+   if (!props.disabled) {
+      isActive.value = true;
+      hasUserTyped.value = false;
    }
 };
 
-const handleEnterKey = async () => {
-   if (suggestions.value.length > 0) {
-      selectSuggestion(suggestions.value[0]);
-   } else {
-      confirmAddress();
-   }
+const filteredOptions = computed(() => {
+   if (!hasUserTyped.value) return sortedOptions.value;
+
+   const query = searchQuery.value.toLowerCase();
+   return sortedOptions.value.filter(option => option.title.toLowerCase().startsWith(query));
+});
+
+const filterOptions = () => {
+   hasUserTyped.value = true;
 };
 
-const clearInput = () => {
-   inputValue.value = '';
-   suggestions.value = [];
-   emit('update:address', null);
-};
-
-const handleFocus = () => {
-   isFocused.value = true;
-};
-
-const handleBlur = () => {
-   isFocused.value = false;
+const selectOption = (option) => {
+   selectedOption.value = option.id;
+   searchQuery.value = displayedSelectedOptionTitle.value;
+   isActive.value = false;
 };
 
 const handleClickOutside = (event) => {
-   const component = document.querySelector('.address-input');
-   if (component && !component.contains(event.target)) {
-      suggestions.value = [];
+   if (!props.disabled && !event.target.closest('.dropdown-2')) {
+      isActive.value = false;
+      searchQuery.value = displayedSelectedOptionTitle.value;
    }
+};
+
+const displayedSelectedOptionTitle = computed(() => {
+   const option = props.options.find(o => o.id === selectedOption.value);
+   return option ? capitalize(option.title) : '';
+});
+
+const capitalize = (text) => {
+   return text.charAt(0).toUpperCase() + text.slice(1);
 };
 
 onMounted(() => {
    document.addEventListener('click', handleClickOutside);
+   searchQuery.value = displayedSelectedOptionTitle.value;
 });
 
-onBeforeUnmount(() => {
+onUnmounted(() => {
    document.removeEventListener('click', handleClickOutside);
+});
+
+watch(() => props.initialSelectedOption, (newOption) => {
+   if (newOption.length && newOption[0] !== selectedOption.value) {
+      selectedOption.value = newOption[0];
+   }
+});
+
+watch(selectedOption, (newOption) => {
+   emit('updateSort', [newOption]);
 });
 </script>
 
 <style scoped lang="scss">
-.address-input {
+.dropdown-2 {
    display: flex;
+   position: relative;
+   width: auto;
    align-items: center;
 
    @media (max-width: 768px) {
       flex-direction: column;
+      gap: 8px;
+      align-items: flex-start;
    }
 
    &__label {
       font-size: 14px;
       color: #323232;
-      margin-bottom: 8px;
       min-width: 270px;
-
-      @media (max-width: 768px) {
-         width: 100%;
-      }
    }
 
-   &__wrapper {
+   &__input {
       position: relative;
-      width: 340px;
+      height: 34px;
+      width: 310px;
 
       @media (max-width: 768px) {
          width: 100%;
-      }
-   }
-
-   &__field {
-      font-size: 14px;
-      padding: 8px 12px;
-      border: 1px solid #d6d6d6;
-      border-radius: 6px;
-      width: 100%;
-      box-sizing: border-box;
-
-      &--error {
-         border-color: #FF5959;
       }
 
       &:focus {
          outline: none;
-         border-radius: 6px 6px 0 0;
+      }
+
+      &::before {
+         pointer-events: none;
+         position: absolute;
+         right: 14px;
+         top: 50%;
+         z-index: 1;
+         content: '';
+         width: 11px;
+         height: 11px;
+         background: url('@/assets/images/svg/arrow.svg') center center / contain no-repeat;
+         transform: translate(0, -50%);
+         transition: 0.3s;
+      }
+
+      input {
+         cursor: pointer;
+         width: 100%;
+         font-size: 14px;
+         height: 34px;
+         padding: 12px;
+         border: 1px solid #d6d6d6;
+         border-radius: 6px;
+         white-space: nowrap;
+         overflow: hidden;
+         text-overflow: ellipsis;
+
+         &:focus {
+            outline: none;
+         }
       }
    }
 
-   &__suggestions {
+   &__list {
       position: absolute;
-      top: calc(100% - 1px);
-      left: 0;
-      right: 0;
-      background-color: #fff;
-      border: 1px solid #d6d6d6;
-      border-radius: 0 0 6px 6px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      z-index: 10;
-      max-height: 200px;
+      border: 1px solid #3366FF;
+      border-top: 1px solid #D6D6D6;
+      left: 270px;
+      top: 33px;
+      z-index: 8;
+      display: flex;
+      flex-direction: column;
+      list-style: none;
+      width: 310px;
+      max-height: 187px;
+      background: #ffffff;
+      border-radius: 6px;
       overflow-y: auto;
-      transition: opacity 0.3s ease;
-   }
 
-   &__clear {
-      position: absolute;
-      top: 50%;
-      right: 10px;
-      transform: translateY(-50%);
-      cursor: pointer;
-      width: 14px;
-      height: 14px;
-
-      &:hover {
-         opacity: 0.7;
+      @media (max-width: 768px) {
+         width: 100%;
+         left: 0;
+         top: 60px;
       }
    }
 
-   &__suggestion {
-      padding: 8px 12px;
+   &__list-item {
+      display: flex;
+      align-items: center;
+      padding: 12px;
       font-size: 14px;
+      line-height: 1.29em;
+      gap: 10px;
+      color: #787878;
+      background: white;
+      transition: 0.3s;
       cursor: pointer;
-      transition: background-color 0.3s ease;
 
       &:hover {
-         background-color: #f0f0f0;
+         background: #D6EFFF;
+         color: #3366FF;
       }
    }
 
-   button {
-      outline: none;
-      text-decoration: none;
-      border: none;
-      border-radius: 50%;
-      background-color: #3366FF;
-      color: white;
-      width: 30px;
-      height: 30px;
-      margin-left: 10px;
+   &--active {
+      .dropdown-2__input::before {
+         transform: translate(0, -50%) rotate(-90deg);
+      }
+
+      .dropdown-2__list {
+         border-radius: 0 0 6px 6px;
+      }
+
+      .dropdown-2__input input {
+         border-radius: 6px 6px 0 0;
+         border: 1px solid #3366FF;
+      }
    }
 
-   &__parts {
-      margin-top: 16px;
+   &--disabled {
+      .dropdown-2__input {
+         background: #EEEEEE;
+         border-radius: 6px;
+      }
 
-      p {
-         margin: 4px 0;
+      input {
+         background: #EEEEEE;
+         pointer-events: none;
+         border: 1px solid #EEEEEE;
+         border-radius: 6px;
+      }
+
+      .dropdown-2__input::before {
+         background: url('@/assets/icons/arrow-gray.svg') center center / contain no-repeat;
+         transform: translate(0, -50%);
+      }
+
+      &::placeholder {
+         color: #787878;
       }
    }
 }

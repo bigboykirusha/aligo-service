@@ -47,7 +47,7 @@ const handleSendAd = async () => {
       console.error('Ошибка отправки объявления:', error);
    } finally {
       setTimeout(() => {
-         router.push('/autos/');
+         router.push('/users/');
          isPublishing.value = false;
       }, 500);
    }
@@ -63,7 +63,7 @@ const saveAd = async () => {
       console.error('Ошибка при сохранении объявления:', error);
    } finally {
       setTimeout(() => {
-         router.push('/autos/');
+         router.push('/users/');
          isSaving.value = false;
       }, 500);
    }

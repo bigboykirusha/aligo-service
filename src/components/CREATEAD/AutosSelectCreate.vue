@@ -10,7 +10,7 @@
             <li v-for="option in filteredOptions" :key="option.id" class="dropdown-2__list-item"
                :class="{ 'dropdown-2__list-item--selected': selectedOption === option.id }"
                @click="selectOption(option)">
-               {{ option.title }}
+               <span v-html="highlightMatch(option.title)"></span>
             </li>
          </ul>
       </div>
@@ -44,12 +44,30 @@ const sortedOptions = computed(() => {
       : props.options;
 });
 
+const highlightMatch = (text) => {
+   if (!searchQuery.value) return text;
+   const query = searchQuery.value;
+   const regex = new RegExp(`(${query})`, 'gi');
+   return text.replace(regex, '<mark>$1</mark>');
+};
+
 const filteredOptions = computed(() => {
    if (!hasUserTyped.value) return sortedOptions.value;
+
    const query = searchQuery.value.toLowerCase();
-   return sortedOptions.value.filter(option =>
+
+   // Сначала совпадения по началу строки
+   const startsWithMatches = sortedOptions.value.filter(option =>
       option.title.toLowerCase().startsWith(query)
    );
+
+   // Потом совпадения внутри строки
+   const includesMatches = sortedOptions.value.filter(option =>
+      !option.title.toLowerCase().startsWith(query) &&
+      option.title.toLowerCase().includes(query)
+   );
+
+   return [...startsWithMatches, ...includesMatches];
 });
 
 const displayedSelectedOptionTitle = computed(() => {
