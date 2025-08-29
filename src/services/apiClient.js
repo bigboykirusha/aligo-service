@@ -691,7 +691,6 @@ export const loginUserByPhone = async ({
     const errorMessage =
       'сервер временно недоступен, повторите попытку через 1 мин' ||
       'Ошибка при входе.';
-    if (error.response?.status >= 500) popupErrorStore.showError(errorMessage);
 
     console.error('Ошибка при входе: ', error.response?.data || error.message);
     return { success: false, message: errorMessage, ...error.response?.data };

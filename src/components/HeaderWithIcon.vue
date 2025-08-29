@@ -6,8 +6,9 @@
 </template>
 
 <script setup>
+import { defineProps } from 'vue';
 
-const props = defineProps({
+defineProps({
    title: String,
    icon: {
       type: String,

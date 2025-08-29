@@ -161,7 +161,6 @@ onMounted(() => {
 });
 </script>
 
-
 <style lang="scss" scoped>
 .create-ad-form {
    display: flex;

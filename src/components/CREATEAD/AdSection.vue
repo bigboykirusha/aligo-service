@@ -47,7 +47,6 @@ const handleCitySelection = (value) => {
    createStore.setField('city_name', value.title);
 };
 
-
 const handleFieldUpdate = (field, value) => {
    createStore.setField(field, value);
 };
