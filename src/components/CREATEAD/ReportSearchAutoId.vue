@@ -17,7 +17,60 @@
             </button>
 
             <h4>Результат проверки</h4>
-            <pre class="report-search__result">{{ result }}</pre>
+
+            <div v-if="formattedResult" class="report-search__fields">
+               <div class="report-search__field">
+                  {{ formattedResult.message }}
+               </div>
+               <div class="report-search__field">
+                  <span class="report-search__label">VIN:</span>
+                  <span class="report-search__value">{{ formattedResult.vin }}</span>
+               </div>
+               <div class="report-search__field">
+                  <span class="report-search__label">Госномер:</span>
+                  <span class="report-search__value">{{ formattedResult.plate }}</span>
+               </div>
+               <div class="report-search__field">
+                  <span class="report-search__label">Марка:</span>
+                  <span class="report-search__value">{{ formattedResult.brand }}</span>
+               </div>
+               <div class="report-search__field">
+                  <span class="report-search__label">Модель:</span>
+                  <span class="report-search__value">{{ formattedResult.model }}</span>
+               </div>
+               <div class="report-search__field">
+                  <span class="report-search__label">Год выпуска:</span>
+                  <span class="report-search__value">{{ formattedResult.year }}</span>
+               </div>
+               <div class="report-search__field">
+                  <span class="report-search__label">Состояние:</span>
+                  <span class="report-search__value">{{ formattedResult.state }}</span>
+               </div>
+               <div class="report-search__field">
+                  <span class="report-search__label">Владельцев:</span>
+                  <span class="report-search__value">{{ formattedResult.owners }}</span>
+               </div>
+               <div class="report-search__field">
+                  <span class="report-search__label">Цена:</span>
+                  <span class="report-search__value">{{ formattedResult.price }}</span>
+               </div>
+               <div class="report-search__field">
+                  <span class="report-search__label">Цвет:</span>
+                  <span class="report-search__value">{{ formattedResult.color }}</span>
+               </div>
+               <div class="report-search__field">
+                  <span class="report-search__label">Пробег:</span>
+                  <span class="report-search__value">{{ formattedResult.mileage }} км</span>
+               </div>
+               <div class="report-search__field">
+                  <span class="report-search__label">Ссылка:</span>
+                  <a :href="formattedResult.url" target="_blank" class="report-search__link">Перейти</a>
+               </div>
+            </div>
+
+            <div v-else>
+               <p>Нет данных по данному VIN/госномеру</p>
+            </div>
          </div>
       </div>
    </div>
@@ -26,24 +79,6 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 import { getReportForAdmin } from "@/services/apiClient";
-
-const validateVIN = (vin) => {
-   const upperVin = vin.toUpperCase();
-   const vinRegex = /^[A-HJ-NPR-Z\d]{17}$/;
-   if (!vinRegex.test(upperVin)) return false;
-   if (/^([A-HJ-NPR-Z\d])\1*$/.test(upperVin)) return false;
-   return true;
-};
-
-const validRegions = new Set([ /* ... список регионов ... */]);
-
-const isValidLicensePlate = (value) => {
-   const regex = /^[АВЕКМНОРСТУХABEKMHOPCTYX](?!000)\d{3}[АВЕКМНОРСТУХABEKMHOPCTYX]{2}(\d{2,3})$/u;
-   const match = value.match(regex);
-   if (!match) return false;
-   const region = match[1];
-   return validRegions.has(region);
-};
 
 const searchValue = ref("");
 const touched = ref(false);
@@ -55,9 +90,98 @@ watch(searchValue, (val) => {
    if (val !== val.toUpperCase()) searchValue.value = val.toUpperCase();
 });
 
+const validateVIN = (vin) => {
+   const upperVin = vin.toUpperCase();
+   const vinRegex = /^[A-HJ-NPR-Z\d]{17}$/;
+   if (!vinRegex.test(upperVin)) return false;
+   if (/^([A-HJ-NPR-Z\d])\1*$/.test(upperVin)) return false;
+   return true;
+};
+
+const validRegions = new Set([/* список регионов */]);
+
+const isValidLicensePlate = (value) => {
+   const regex =
+      /^[АВЕКМНОРСТУХABEKMHOPCTYX](?!000)\d{3}[АВЕКМНОРСТУХABEKMHOPCTYX]{2}(\d{2,3})$/u;
+   const match = value.match(regex);
+   if (!match) return false;
+   const region = match[1];
+   return validRegions.has(region);
+};
+
 const isValid = computed(() => {
    if (!searchValue.value) return false;
    return validateVIN(searchValue.value) || isValidLicensePlate(searchValue.value);
+});
+
+const formattedResult = computed(() => {
+   if (!result.value) return null;
+
+   // --- формат №1: data = []
+   if (Array.isArray(result.value.data) && result.value.data[0]) {
+      const ad = result.value.data[0];
+      return {
+         message: result.value.message,
+         vin: ad.auto_registration_data?.[0]?.vin || "—",
+         plate: ad.auto_registration_data?.[0]?.state_number || "—",
+         brand: ad.auto_technical_specifications?.[0]?.brand?.title || "—",
+         model: ad.auto_technical_specifications?.[0]?.model?.title || "—",
+         year: ad.auto_technical_specifications?.[0]?.year_release?.title || "—",
+         state: ad.auto_history_conditions?.[0]?.state?.title || "—",
+         owners: ad.auto_history_conditions?.[0]?.count_owners?.title || "—",
+         mileage: ad.auto_history_conditions?.[0]?.mileage || "—",
+         price: ad.ads_parameter?.amount ? `${ad.ads_parameter.amount} ₽` : "—",
+         color: ad.auto_appearances?.[0]?.color?.[0]?.title || "—",
+         url: ad.url,
+      };
+   }
+
+   // --- формат №2: data = { ... }
+   if (result.value.success && result.value.data && !Array.isArray(result.value.data)) {
+      const d = result.value.data;
+      return {
+         message: "Данные найдены",
+         vin: d.vin || d.body || "—",
+         plate: d.regNumber || "—",
+         brand: d.brand || "—",
+         model: d.model || d.brand_model || "—",
+         year: d.year || "—",
+         state: "—",
+         owners: "—",
+         mileage: "—",
+         price: "—",
+         color: "—",
+         url: "—",
+      };
+   }
+
+   // --- формат №3: ошибка
+   if (result.value.success === false) {
+      let msg = "Нет данных";
+
+      if (Array.isArray(result.value.message)) {
+         msg = result.value.message.join(", ");
+      } else if (typeof result.value.message === "string") {
+         msg = result.value.message;
+      }
+
+      return {
+         message: msg,
+         vin: "—",
+         plate: "—",
+         brand: "—",
+         model: "—",
+         year: "—",
+         state: "—",
+         owners: "—",
+         mileage: "—",
+         price: "—",
+         color: "—",
+         url: "—",
+      };
+   }
+
+   return null;
 });
 
 const handleSearch = async () => {
@@ -92,6 +216,47 @@ const handleSearch = async () => {
          box-shadow: 0 0 4px rgba(51, 102, 255, 0.5);
       }
    }
+
+   &__fields {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 14px;
+   }
+
+   &__field {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f9f9f9;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+   }
+
+   &__label {
+      font-weight: 600;
+      color: #555;
+   }
+
+   &__value {
+      color: #222;
+      font-weight: 400;
+      text-align: right;
+      max-width: 60%;
+      word-break: break-word;
+   }
+
+   &__link {
+      color: #3366ff;
+      font-weight: 500;
+      text-decoration: none;
+
+      &:hover {
+         text-decoration: underline;
+      }
+   }
+
 
    &__btn {
       padding: 10px 18px;
@@ -131,7 +296,7 @@ const handleSearch = async () => {
       background: #fff;
       padding: 16px;
       border-radius: 10px;
-      max-width: 500px;
+      max-width: 600px;
       width: 90%;
       max-height: 70vh;
       overflow: hidden;
@@ -156,6 +321,8 @@ const handleSearch = async () => {
       max-height: 50vh;
       white-space: pre-wrap;
       word-wrap: break-word;
+
+
    }
 
    &__close {

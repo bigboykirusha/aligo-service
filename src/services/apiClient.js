@@ -949,12 +949,10 @@ export const getReportForAdmin = async (stateNumberOrVin) => {
       );
     }, 5000);
 
-    const response = await apiClient.get(
-      `/moderations/get_report_for_admin`,
+    const response = await apiClient.post(
+      '/moderations/get_report_for_admin',
       {
-        params: {
-          state_number_or_vin: stateNumberOrVin,
-        },
+        state_number_or_vin: stateNumberOrVin,
       }
     );
 
@@ -964,7 +962,7 @@ export const getReportForAdmin = async (stateNumberOrVin) => {
     clearTimeout(timeoutId);
 
     const errorMessage =
-      'сервер временно недоступен, повторите попытку через 1 мин' ||
+      'Ничего не найдено' ||
       'Ошибка при получении отчёта.';
 
     if (error.response?.status >= 500) {
