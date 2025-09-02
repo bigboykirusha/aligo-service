@@ -938,6 +938,44 @@ export const getCityOption = async () => {
   }
 };
 
+export const getReportForAdmin = async (stateNumberOrVin) => {
+  const popupErrorStore = usePopupErrorStore();
+  let timeoutId;
+
+  try {
+    timeoutId = setTimeout(() => {
+      popupErrorStore.showWarning(
+        'Пожалуйста, подождите, сервер отвечает дольше обычного...'
+      );
+    }, 5000);
+
+    const response = await apiClient.get(
+      `/moderations/get_report_for_admin`,
+      {
+        params: {
+          state_number_or_vin: stateNumberOrVin,
+        },
+      }
+    );
+
+    clearTimeout(timeoutId);
+    return response.data;
+  } catch (error) {
+    clearTimeout(timeoutId);
+
+    const errorMessage =
+      'сервер временно недоступен, повторите попытку через 1 мин' ||
+      'Ошибка при получении отчёта.';
+
+    if (error.response?.status >= 500) {
+      popupErrorStore.showError(errorMessage);
+    }
+
+    console.error('Ошибка при получении отчёта: ', error);
+    return { success: false, message: errorMessage, ...error.response?.data };
+  }
+};
+
 export const getFilterOption = async () => {
   const popupErrorStore = usePopupErrorStore();
   let timeoutId;

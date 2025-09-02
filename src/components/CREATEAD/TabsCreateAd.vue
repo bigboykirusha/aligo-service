@@ -4,6 +4,7 @@
          <img :src="backIcon" alt="Назад" class="profile__back-icon" />
       </button>
       Новое объявление от имени «{{ userFullName }} #{{ userCode }}»
+      <ReportSearchAutoId />
    </div>
    <div class="tabs">
 
@@ -42,6 +43,7 @@ import { usePopupErrorStore } from '@/store/popupErrorStore';
 import { useRoute } from 'vue-router';
 import backIcon from '@/assets/icons/back-wide.svg';
 import router from '@/router';
+import ReportSearchAutoId from './ReportSearchAutoId.vue';
 
 const popupErrorStore = usePopupErrorStore();
 const tabsStore = useTabsStore();
@@ -114,7 +116,8 @@ onMounted(async () => {
 
    @media (max-width: 768px) {
       padding: 0;
-      margin-bottom: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
    }
 }
 
