@@ -1,7 +1,7 @@
 <template>
   <div class="users">
     <OptimizationHeader title="Пользователи" status="Сейчас на странице" :count="totalCount" />
-    <CustomMainHeader :showCreateButton="true" @create="goToCreateProfilePage" :sortOptions="[
+    <CustomMainHeader :showCreateButton="true" @create="goToCreateProfilePage" @search="handleSearch" :sortOptions="[
       { label: 'Все', value: '0' },
       { label: 'Частные профили', value: '1' },
       { label: 'Коммерческие', value: '2' },
@@ -71,6 +71,8 @@ const selectRole = ref({
   success: false,
 });
 
+const searchQuery = ref('');
+
 const itemRow = ref([]);
 const currentStep = ref(1);
 const totalCount = ref(1);
@@ -136,6 +138,11 @@ const goToCreateProfilePage = () => {
   router.push(`/create-profile/`);
 };
 
+const handleSearch = (query) => {
+  searchQuery.value = query;
+  fetchUsers(searchQuery.value);
+};
+
 const handleOptionChange = async (item, emitEvent) => {
   switch (selectRole.value.code) {
     case 'copyLink': {
@@ -194,23 +201,22 @@ const handleArrowOptionClick = () => {
  // router.push(`/user/${item.id.value}/`);
 };
 
-const fetchUsers = async () => {
+const fetchUsers = async (search = '') => {
+  preloader.value = true;
+
   try {
     const response = await getUsers({
       count,
       step: currentStep.value,
       order_by: orderBy,
+      search, 
     });
 
     const users = response.users || [];
 
     itemRow.value = users.map((user) => ({
       customOptionStart: { slot: 'start', contenteditable: false },
-      name: {
-        value: user.username || '—',
-        type: 'text',
-        contenteditable: false,
-      },
+      name: { value: user.username || '—', type: 'text', contenteditable: false },
       id: { value: user.id.toString(), type: 'text', contenteditable: false },
       phone: { value: user.phone || '—', type: 'text', contenteditable: false },
       email: { value: user.email || '—', type: 'text', contenteditable: false },
@@ -227,6 +233,7 @@ const fetchUsers = async () => {
   } catch (error) {
     console.error('Ошибка при загрузке пользователей', error);
   }
+
   preloader.value = false;
 };
 

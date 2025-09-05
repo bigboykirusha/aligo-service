@@ -2854,6 +2854,7 @@ export const getUsers = async ({
   count = 20,
   step = 1,
   order_by = 'desc',
+  search = '', 
 } = {}) => {
   const popupErrorStore = usePopupErrorStore();
   let timeoutId;
@@ -2872,6 +2873,7 @@ export const getUsers = async ({
           count,
           step,
           order_by,
+          search,
         },
       }
     );

@@ -38,7 +38,7 @@ defineProps({
   },
 });
 
-const emit = defineEmits(['updateSort', 'create']);
+const emit = defineEmits(['updateSort', 'create', 'search']);
 
 const searchQuery = ref('');
 
@@ -48,6 +48,10 @@ function handleSortUpdate(value) {
 
 function createNewUser() {
   emit('create');
+}
+
+function serchAction() {
+  emit('search', searchQuery.value);
 }
 </script>
 
