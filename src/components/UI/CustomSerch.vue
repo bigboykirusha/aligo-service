@@ -133,7 +133,13 @@ const onInput = async (value) => {
 
   emit('update:model-value', value);
 };
-const clickIcon = (event) => emit('clickIcon', event);
+
+const clickIcon = (event) => {
+  if (event === 'cler') {
+    emit('update:model-value', ''); 
+  }
+  emit('clickIcon', event);
+};
 
 onMounted(() => {
   if (props.phoneInput) maxLenght.value = 18;
