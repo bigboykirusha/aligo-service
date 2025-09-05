@@ -136,6 +136,7 @@ import { loginUserByPhone, confirmPhoneCode, getSiteDocumentById } from '@/servi
 import { useUserStore } from '@/store/user';
 import { OTPInput } from 'vue-input-otp'
 import { useLoginModalStore } from '@/store/loginModal.js';
+import CheckboxUI from './UI/CheckboxUI.vue';
 
 const loginModalStore = useLoginModalStore();
 const route = useRoute();

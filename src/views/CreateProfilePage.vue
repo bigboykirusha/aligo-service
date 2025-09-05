@@ -16,16 +16,20 @@
       </li>
       <li class="create-profile__item" :class="{ 'has-error': errors.phone }">
         <span class="create-profile__text">Телефон</span>
-        <input type="tel" v-model="form.phone" class="phone-input" ref="phoneInput" v-mask="'+7 (###) ###-##-##'" />
-
+        <input type="tel" v-model="form.phone" class="phone-input" ref="phoneInput" v-mask="'+7 (###) ###-##-##'"
+          placeholder="+7 (___) ___-__-__" />
       </li>
       <li class="create-profile__item">
         <span class="create-profile__text">E-mail</span>
         <CustomInput v-model="form.email" placeholder="Нажмите для ввода" />
       </li>
       <li class="create-profile__item">
-        <span class="create-profile__text">Локация</span>
-        <CustomInput v-model="form.address" placeholder="Нажмите для ввода" />
+        <span class="create-profile__text">Город</span>
+        <CityAutosCreate :modelValue="form.city_name" :showLabel="false" @updateCity="handleCitySelection" />
+      </li>
+      <li class="create-profile__item">
+        <span class="create-profile__text">Адрес</span>
+        <AutosAddressInput @update:address="(value) => handleFieldUpdate('address', value)" :option="form.address" />
       </li>
     </ul>
     <hr class="create-profile__divider" />
@@ -46,6 +50,8 @@ import CustomInput from '@/components/UI/CustomInput.vue';
 import PhotoUploader from '@/components/USER/PhotoUploader.vue';
 import { createUser } from '@/services/apiClient';
 import { mask as vMask } from 'vue-the-mask';
+import CityAutosCreate from '@/components/CREATEAD/CityAutosCreate.vue';
+import AutosAddressInput from '@/components/CREATEAD/AutosAddressInput.vue';
 
 const router = useRouter();
 
@@ -53,8 +59,9 @@ const form = reactive({
   username: '',
   phone: '',
   email: '',
+  city_id: '',
+  city_name: '',
   address: '',
-  city_id: 262,
   photo: '',
 });
 
@@ -69,11 +76,21 @@ const isPhoneValid = () => {
 
 const isFormValid = computed(() => {
   return (
-    form.username.trim() !== '' &&
-    form.address.trim() !== '' &&
+    form.username !== '' &&
+    form.address !== '' &&
+    form.city_id !== '' &&
     isPhoneValid()
   );
 });
+
+const handleCitySelection = (value) => {
+  form.city_id = value.id;
+  form.city_name = value.title;
+};
+
+const handleFieldUpdate = (field, value) => {
+  form[field] = value;
+};
 
 const handleCreate = async (publish) => {
   const payload = { ...form };
@@ -90,9 +107,10 @@ const handleCreate = async (publish) => {
 
     if (publish) {
       console.log('Опубликовать объявление от нового пользователя');
+      router.push(`/createad/${data.data.id}/`);
+    } else {
+      router.push('/users/');
     }
-
-    router.push('/users/');
   }
 };
 

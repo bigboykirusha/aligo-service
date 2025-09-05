@@ -9,7 +9,7 @@
       </div>
       <BlockTitle text="Местоположение" />
       <div class="characteristics__content">
-         <CityAutosCreate @updateCity="handleCitySelection" />
+         <CityAutosCreate :modelValue="createStore.city_name" @updateCity="handleCitySelection" />
          <AutosAddressInput label="Место осмотра"
             @update:address="(value) => handleFieldUpdate('place_inspection', value)"
             :option="createStore.place_inspection" />

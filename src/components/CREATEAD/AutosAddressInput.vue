@@ -77,11 +77,6 @@ const selectSuggestion = (suggestion) => {
 
    parseAddress(suggestion.geoObject);
 
-   if (latitude.value && longitude.value) {
-      createStore.setField('latitude', latitude.value);
-      createStore.setField('longitude', longitude.value);
-   }
-
    emit('update:address', inputValue.value);
 };
 

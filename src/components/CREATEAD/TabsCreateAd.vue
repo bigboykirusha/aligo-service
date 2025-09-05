@@ -1,13 +1,17 @@
 <template>
    <div class="tabs__title">
-      <button @click="goBack" class="profile__back-button">
-         <img :src="backIcon" alt="Назад" class="profile__back-icon" />
-      </button>
-      Новое объявление от имени «{{ userFullName }} #{{ userCode }}»
+      <div class="tabs__header-info">
+         <button @click="goBack" class="profile__back-button">
+            <img :src="backIcon" alt="Назад" class="profile__back-icon" />
+         </button>
+         <span class="tabs__header-text">
+            Новое объявление от имени «{{ userFullName }} #{{ userCode }}»
+         </span>
+      </div>
       <ReportSearchAutoId />
    </div>
-   <div class="tabs">
 
+   <div class="tabs">
       <div v-for="(tab, index) in tabs" :key="tab.index" class="tabs__item">
          <div class="tabs__tab" :class="{
             'tabs__tab--active': activeTab === tab.index,
@@ -18,7 +22,9 @@
                   class="tabs__tab-icon" />
                <b v-else key="number">{{ tab.index }}</b>
             </transition>
-            <span v-if="tab.index === activeTab" class="tabs__label"> •&nbsp;&nbsp;{{ tab.label }}</span>
+            <span v-if="tab.index === activeTab" class="tabs__label">
+               •&nbsp;&nbsp;{{ tab.label }}
+            </span>
          </div>
          <div v-if="index < tabs.length - 1" class="tabs__arrow" :class="{ 'tabs__arrow--active': activeTab > index }">
             <svg width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -98,6 +104,12 @@ onMounted(async () => {
    }
 }
 
+.tabs__header-info {
+   display: flex;
+   align-items: center;
+   gap: 16px;
+}
+
 .tabs__item {
    display: flex;
    align-items: center;
@@ -150,6 +162,10 @@ onMounted(async () => {
       opacity: 0;
       transition: opacity 0.3s ease-in-out;
       padding-left: 6px;
+
+      @media (max-width: 768px) {
+         display: none;
+      }
    }
 
    &--active {
@@ -198,7 +214,7 @@ onMounted(async () => {
 }
 
 .profile__back-button {
-   width: 34px;
+   min-width: 34px;
    height: 34px;
    display: flex;
    align-items: center;

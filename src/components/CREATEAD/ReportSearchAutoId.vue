@@ -195,6 +195,14 @@ const formattedResult = computed(() => {
    return null;
 });
 
+watch(showPopup, (val) => {
+   if (val) {
+      document.body.classList.add("modal-open")
+   } else {
+      document.body.classList.remove("modal-open")
+   }
+})
+
 const handleSearch = async () => {
    if (!isValid.value) return;
    try {
@@ -233,6 +241,10 @@ const handleSearch = async () => {
       flex-direction: column;
       gap: 8px;
       font-size: 14px;
+      overflow-y: auto;
+      flex: 1; 
+      min-height: 0; 
+      padding-right: 8px;
    }
 
    &__field {
@@ -295,11 +307,13 @@ const handleSearch = async () => {
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(3px);
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 1000;
+      padding: 20px;
    }
 
    &__popup-content {
@@ -308,17 +322,16 @@ const handleSearch = async () => {
       padding: 16px;
       border-radius: 10px;
       max-width: 600px;
-      width: 90%;
-      max-height: 70vh;
-      overflow: hidden;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
       display: flex;
       flex-direction: column;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
       gap: 12px;
 
       h4 {
-         margin: 0;
-         margin-bottom: 16px;
+         margin: 0 0 16px 0;
       }
    }
 

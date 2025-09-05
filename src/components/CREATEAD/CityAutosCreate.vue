@@ -1,6 +1,6 @@
 <template>
    <div class="dropdown-2" :class="{ 'dropdown-2--active': isActive, 'dropdown-2--disabled': disabled }" ref="dropdown">
-      <div class="dropdown-2__label">Город</div>
+      <div v-if="showLabel" class="dropdown-2__label">Город</div>
       <div class="dropdown-2__input" :class="{ 'dropdown__input--disabled': disabled }">
          <div class="input-wrapper">
             <input class="input" type="text" v-model="searchQuery" placeholder="Начните вводить название города"
@@ -19,47 +19,48 @@
 import { ref, watch, onMounted, onUnmounted, defineEmits, defineProps } from 'vue';
 import { debounce } from 'lodash';
 import { searchCitiesByName } from '@/services/apiClient';
-import { useCreateStore } from '@/store/create';
-
-const createStore = useCreateStore();
 
 const props = defineProps({
    disabled: {
       type: Boolean,
       default: false,
    },
+   showLabel: {
+      type: Boolean,
+      default: true, 
+   },
+   modelValue: {
+      type: String,
+      default: '', 
+   }
 });
 
-const emit = defineEmits(['updateCity']);
-const searchQuery = ref(createStore.city_name || '');
+const emit = defineEmits(['updateCity', 'update:modelValue']);
+const searchQuery = ref(props.modelValue);
 const cities = ref([]);
 const isActive = ref(false);
 
 const activateDropdown = () => {
-   if (!props.disabled) {
-      isActive.value = true;
-   }
+   if (!props.disabled) isActive.value = true;
 };
 
 const searchCities = async (query) => {
-   const q = query ?? '';
-   if (q.length >= 1) {
-      try {
-         cities.value = await searchCitiesByName(q);
-      } catch (error) {
-         console.error('Ошибка поиска городов:', error);
-      }
-   } else {
+   if (!query) {
       cities.value = [];
+      return;
+   }
+   try {
+      cities.value = await searchCitiesByName(query);
+   } catch (error) {
+      console.error('Ошибка поиска городов:', error);
    }
 };
 
-const debouncedSearch = debounce((newQuery) => {
-   searchCities(newQuery);
-}, 300);
+const debouncedSearch = debounce((q) => searchCities(q), 300);
 
 watch(searchQuery, (newQuery) => {
    debouncedSearch(newQuery);
+   emit('update:modelValue', newQuery); 
 });
 
 const selectCity = (city) => {
@@ -71,12 +72,11 @@ const selectCity = (city) => {
 const handleClickOutside = (event) => {
    if (!props.disabled && !event.target.closest('.dropdown-2')) {
       isActive.value = false;
-      searchQuery.value = createStore.city_name;
+      searchQuery.value = props.modelValue; 
    }
 };
 
 onMounted(() => {
-   searchQuery.value = createStore.city_name;
    document.addEventListener('click', handleClickOutside);
 });
 
@@ -84,7 +84,6 @@ onUnmounted(() => {
    document.removeEventListener('click', handleClickOutside);
 });
 </script>
-
 
 <style scoped lang="scss">
 .dropdown-2 {
