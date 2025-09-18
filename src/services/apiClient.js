@@ -2852,7 +2852,7 @@ export const createUser = async ({ username, address, photo, city_id, phone }) =
 
 export const getUsers = async ({
   count = 20,
-  step = 1,
+  page = 1,
   order_by = 'desc',
   search = '', 
 } = {}) => {
@@ -2871,7 +2871,7 @@ export const getUsers = async ({
       {
         params: {
           count,
-          step,
+          page,
           order_by,
           search,
         },

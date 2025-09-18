@@ -10,7 +10,8 @@
     <div class="users-table__box">
       <CustomTable :ItemRows="itemRow" :headerRows="headerRows" :lineClamp="5" height="120px"
         @heder-item-action="filterTableRow" @slot-clicked="handleButtonClick" @item-action="handleArrowOptionClick"
-        :tablePagination="false" :totalPages="totalPages">
+        :tablePagination="true" :currentPage="pagination.currentPage" :perPage="pagination.perPage"
+        :total="pagination.totalCount" @update:currentPage="(val) => handlePageChange(val)">
         <!-- Слот в начале строки -->
         <template #slot-start="{ }">
           <CustomStatusIndicator status="green" title="В сети" />
@@ -71,12 +72,21 @@ const selectRole = ref({
   success: false,
 });
 
+const pagination = ref({
+  currentPage: 1,
+  perPage: 20,
+  totalPages: 1,
+  totalCount: 0,
+});
+
+const handlePageChange = (newPage) => {
+  pagination.value.currentPage = newPage;
+  fetchUsers(searchQuery.value);
+};
+
 const searchQuery = ref('');
 
 const itemRow = ref([]);
-const currentStep = ref(1);
-const totalCount = ref(1);
-const count = 50;
 const orderBy = 'desc';
 
 const headerRows = ref([
@@ -198,7 +208,7 @@ const filterTableRow = (code, filterType) => {
 };
 
 const handleArrowOptionClick = () => {
- // router.push(`/user/${item.id.value}/`);
+  // router.push(`/user/${item.id.value}/`);
 };
 
 const fetchUsers = async (search = '') => {
@@ -206,13 +216,18 @@ const fetchUsers = async (search = '') => {
 
   try {
     const response = await getUsers({
-      count,
-      step: currentStep.value,
+      count: pagination.value.perPage,
+      page: pagination.value.currentPage,
       order_by: orderBy,
-      search, 
+      search,
     });
 
     const users = response.users || [];
+    console.log(response);
+
+    pagination.value.totalPages = response.total_page;
+    pagination.value.currentPage = response.current_page;
+    pagination.value.totalCount = response.total_count;
 
     itemRow.value = users.map((user) => ({
       customOptionStart: { slot: 'start', contenteditable: false },
@@ -229,7 +244,6 @@ const fetchUsers = async (search = '') => {
       customOptionEnd: { slot: 'end', contenteditable: false, id: user.id },
     }));
 
-    totalCount.value = response.total_count;
   } catch (error) {
     console.error('Ошибка при загрузке пользователей', error);
   }

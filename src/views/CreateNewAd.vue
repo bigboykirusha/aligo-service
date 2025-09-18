@@ -125,7 +125,6 @@ onBeforeRouteLeave((to, from, next) => {
       next();
       return;
    }
-   createStore.autoSaveField('is_finished', 1);
    resetState();
    next();
 });
