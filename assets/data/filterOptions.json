@@ -1,0 +1,163 @@
+{
+  "DEFAULT_STATE_OPTIONS": [
+    { "id": "all", "title": "Все" },
+    { "id": "new", "title": "Новые" },
+    { "id": "used", "title": "Б/у" }
+  ],
+  "YES_NO_ANY": [
+    { "id": "all", "title": "Все" },
+    { "id": "yes", "title": "Да" },
+    { "id": "no", "title": "Нет" }
+  ],
+  "COMMON_BRANDS": [
+    { "id": "Bosch", "title": "Bosch" },
+    { "id": "Mann", "title": "Mann" },
+    { "id": "Mahle", "title": "Mahle" },
+    { "id": "NGK", "title": "NGK" },
+    { "id": "Valeo", "title": "Valeo" },
+    { "id": "Sachs", "title": "Sachs" }
+  ],
+  "TIRE_BRANDS": [
+    { "id": "Michelin", "title": "Michelin" },
+    { "id": "Pirelli", "title": "Pirelli" },
+    { "id": "Bridgestone", "title": "Bridgestone" },
+    { "id": "Continental", "title": "Continental" },
+    { "id": "Nokian", "title": "Nokian" },
+    { "id": "Yokohama", "title": "Yokohama" }
+  ],
+  "VEHICLE_BRANDS": [
+    { "id": 1, "title": "Toyota" },
+    { "id": 2, "title": "BMW" },
+    { "id": 3, "title": "Mercedes-Benz" },
+    { "id": 4, "title": "Lada" },
+    { "id": 5, "title": "Kia" },
+    { "id": 6, "title": "Hyundai" }
+  ],
+  "VEHICLE_MODELS_BY_BRAND": {
+    "1": [
+      { "id": 101, "title": "Camry" },
+      { "id": 102, "title": "Corolla" },
+      { "id": 103, "title": "RAV4" }
+    ],
+    "2": [
+      { "id": 201, "title": "3 Series" },
+      { "id": 202, "title": "5 Series" },
+      { "id": 203, "title": "X5" }
+    ],
+    "3": [
+      { "id": 301, "title": "C-Class" },
+      { "id": 302, "title": "E-Class" },
+      { "id": 303, "title": "GLE" }
+    ],
+    "4": [
+      { "id": 401, "title": "Granta" },
+      { "id": 402, "title": "Vesta" },
+      { "id": 403, "title": "Niva" }
+    ],
+    "5": [
+      { "id": 501, "title": "Rio" },
+      { "id": 502, "title": "Ceed" },
+      { "id": 503, "title": "Sportage" }
+    ],
+    "6": [
+      { "id": 601, "title": "Solaris" },
+      { "id": 602, "title": "Elantra" },
+      { "id": 603, "title": "Creta" }
+    ]
+  },
+  "VEHICLE_GENERATIONS_BY_BRAND_MODEL": {
+    "1:101": [{ "id": 1001, "title": "XV50" }, { "id": 1002, "title": "XV70" }],
+    "1:102": [{ "id": 1003, "title": "E150" }, { "id": 1004, "title": "E210" }],
+    "2:201": [{ "id": 2001, "title": "F30" }, { "id": 2002, "title": "G20" }],
+    "2:202": [{ "id": 2003, "title": "F10" }, { "id": 2004, "title": "G30" }],
+    "3:301": [{ "id": 3001, "title": "W204" }, { "id": 3002, "title": "W205" }],
+    "4:402": [{ "id": 4001, "title": "I" }, { "id": 4002, "title": "NG" }],
+    "5:503": [{ "id": 5001, "title": "III" }, { "id": 5002, "title": "IV" }],
+    "6:603": [{ "id": 6001, "title": "I" }, { "id": 6002, "title": "II" }]
+  },
+  "TIRE_MODELS_BY_BRAND": {
+    "Michelin": [
+      { "id": "Primacy", "title": "Primacy" },
+      { "id": "X-Ice", "title": "X-Ice" }
+    ],
+    "Pirelli": [
+      { "id": "Cinturato", "title": "Cinturato" },
+      { "id": "Scorpion", "title": "Scorpion" }
+    ],
+    "Bridgestone": [
+      { "id": "Turanza", "title": "Turanza" },
+      { "id": "Blizzak", "title": "Blizzak" }
+    ],
+    "Continental": [
+      { "id": "PremiumContact", "title": "PremiumContact" },
+      { "id": "IceContact", "title": "IceContact" }
+    ]
+  },
+  "AUTO_MOCK_OPTIONS": {
+    "states": [
+      { "id": "Отличное", "title": "Отличное" },
+      { "id": "Хорошее", "title": "Хорошее" },
+      { "id": "Требует ремонта", "title": "Требует ремонта" }
+    ],
+    "bodyTypes": [
+      { "id": "Седан", "title": "Седан" },
+      { "id": "Хэтчбек", "title": "Хэтчбек" },
+      { "id": "Универсал", "title": "Универсал" },
+      { "id": "Внедорожник", "title": "Внедорожник" }
+    ],
+    "engineTypes": [
+      { "id": "Бензин", "title": "Бензин" },
+      { "id": "Дизель", "title": "Дизель" },
+      { "id": "Гибрид", "title": "Гибрид" },
+      { "id": "Электро", "title": "Электро" }
+    ],
+    "drives": [
+      { "id": "Передний", "title": "Передний" },
+      { "id": "Задний", "title": "Задний" },
+      { "id": "Полный", "title": "Полный" }
+    ],
+    "transmissions": [
+      { "id": "Механика", "title": "Механика" },
+      { "id": "Автомат", "title": "Автомат" },
+      { "id": "Робот", "title": "Робот" },
+      { "id": "Вариатор", "title": "Вариатор" }
+    ],
+    "colors": [
+      { "id": "Белый", "title": "Белый" },
+      { "id": "Черный", "title": "Черный" },
+      { "id": "Серый", "title": "Серый" },
+      { "id": "Синий", "title": "Синий" }
+    ]
+  },
+  "MOTO_MOCK_OPTIONS": {
+    "brands": [
+      { "id": "Yamaha", "title": "Yamaha" },
+      { "id": "Honda", "title": "Honda" },
+      { "id": "Suzuki", "title": "Suzuki" },
+      { "id": "Kawasaki", "title": "Kawasaki" },
+      { "id": "BRP", "title": "BRP" },
+      { "id": "CFMOTO", "title": "CFMOTO" },
+      { "id": "Polaris", "title": "Polaris" }
+    ],
+    "originCountries": [
+      { "id": "Япония", "title": "Япония" },
+      { "id": "Германия", "title": "Германия" },
+      { "id": "Италия", "title": "Италия" },
+      { "id": "Китай", "title": "Китай" },
+      { "id": "США", "title": "США" },
+      { "id": "Россия", "title": "Россия" }
+    ],
+    "colors": [
+      { "id": 1, "title": "Белый", "code": "#ffffff" },
+      { "id": 2, "title": "Черный", "code": "#1f1f1f" },
+      { "id": 3, "title": "Серый", "code": "#9ca3af" },
+      { "id": 4, "title": "Синий", "code": "#2563eb" },
+      { "id": 5, "title": "Серебристый", "code": "#d1d5db", "is_gradient": true },
+      { "id": 6, "title": "Красный", "code": "#dc2626" },
+      { "id": 7, "title": "Зеленый", "code": "#16a34a" },
+      { "id": 8, "title": "Желтый", "code": "#facc15" },
+      { "id": 9, "title": "Оранжевый", "code": "#f97316" },
+      { "id": 10, "title": "Коричневый", "code": "#92400e" }
+    ]
+  }
+}

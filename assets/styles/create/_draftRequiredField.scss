@@ -1,0 +1,19 @@
+@mixin draft-required-field-highlight {
+   :deep(.draft-required-field--active .dropdown-2__input),
+   :deep(.draft-required-field--active .simple-input__wrapper),
+   :deep(.draft-required-field--active .number-input__wrapper),
+   :deep(.draft-required-field--active .switcher__items),
+   :deep(.draft-required-field--active .simple-textarea__field-wrapper),
+   :deep(.draft-required-field--active .address-input__wrapper) {
+      box-shadow: 0px 0px 20px 0px rgba(117, 189, 255, 0.5);
+      border-radius: 6px;
+      background-color: rgba(51, 102, 255, 0.03);
+   }
+
+   :deep(.draft-required-field--active .dropdown-2__input .input-text-2),
+   :deep(.draft-required-field--active .dropdown-2__input .input-text-2__input),
+   :deep(.draft-required-field--active .dropdown-2__input input) {
+      box-shadow: none !important;
+      background-color: transparent;
+   }
+}

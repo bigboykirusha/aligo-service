@@ -1,0 +1,70 @@
+/* Basic colors */
+$main-button: #3366ff;
+$main-button-hover: #144df8;
+$second-color: #3366ff;
+$third-color: #787878;
+$fourth-color: #a8a8a8;
+$second-button: #d6efff;
+$second-button-hover: #a4dcff;
+$main-text: #323232;
+$box-shadow-subtle: 1px 1px 5px rgba(0, 0, 0, 0.16);
+$box-shadow-hover: 2px 2px 8px rgba(0, 0, 0, 0.16);
+$text-button: #eef9ff;
+$circle-secondary: #5580ff;
+/* Basic colors */
+
+/* Additional colors */
+$color-block: #eeeeee;
+$color-stroke: #d6d6d6;
+$color-explain: #a8a8a8;
+$color-text-select: #787878;
+$color-error: #ff5959;
+$color-agree: #3bbc71;
+$switch-color: #d9d9d9;
+
+/* Additional colors */
+
+/*Tags colors*/
+$tags-blue: #80b2ff;
+$tags-grey: #ededed;
+$tags-orange: #ffc658;
+$tags-sky: #dff7ff;
+$tags-yellow: #f8e93c;
+$tags-purple: #d0b3ff;
+/*Tags colors*/
+
+/* Gradient colors */
+$blue-purple: linear-gradient(
+   102.49deg,
+   $main-button 24.68%,
+   $fourth-color 73.25%
+);
+$light-blue: linear-gradient(
+   102.49deg,
+   $main-button 24.68%,
+   $second-color 73.25%
+);
+$pink-purple: linear-gradient(
+   102.49deg,
+   $third-color 24.68%,
+   $fourth-color 73.25%
+);
+/* Gradient colors */
+
+/* Default colors */
+$white: #ffffff;
+$black: #000000;
+$black-2: #323232;
+/* Default colors */
+
+$transition-1: all linear 150ms;
+$transition-2: all linear 250ms;
+
+$font-size-12: 12px;
+$line-height-12: 16px;
+$font-size-14: 14px;
+$line-height-14: 18px;
+$font-size-16: 16px;
+$line-height-16: 20px;
+$font-size-20: 20px;
+$line-height-20: 24px;

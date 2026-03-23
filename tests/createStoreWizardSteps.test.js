@@ -1,0 +1,65 @@
+import { describe, expect, it } from 'vitest'
+import {
+   CREATE_FLOW_CARS,
+   CREATE_FLOW_MOTO_MOTORCYCLES,
+   CREATE_FLOW_MOTO_SCOOTERS,
+   CREATE_FLOW_PARTS_CAR_DISKS,
+   CREATE_FLOW_PARTS_CAR_TIRES,
+   CREATE_FLOW_PARTS_FULL_WHEELS,
+   CREATE_FLOW_PARTS_MOTO_TIRES,
+   CREATE_FLOW_PARTS_MOTOR_OIL
+} from '../store/createStore/flows'
+import {
+   CREATE_WIZARD_STEP_AD_DETAILS,
+   CREATE_WIZARD_STEP_AUTOS_OPTIONS,
+   CREATE_WIZARD_STEP_AUTOS_PARAMETERS,
+   CREATE_WIZARD_STEP_MOTO_MOTORCYCLES_PARAMETERS,
+   CREATE_WIZARD_STEP_MOTO_SCOOTERS_PARAMETERS,
+   CREATE_WIZARD_STEP_PARTS_DISKS_PARAMETERS,
+   CREATE_WIZARD_STEP_PARTS_FULL_WHEELS_PARAMETERS,
+   CREATE_WIZARD_STEP_PARTS_MOTO_TIRES_PARAMETERS,
+   CREATE_WIZARD_STEP_PARTS_MOTOR_OIL_PARAMETERS,
+   CREATE_WIZARD_STEP_PARTS_TIRES_PARAMETERS,
+   getCreateWizardStepKeysByFlow
+} from '../store/createStore/wizardSteps'
+
+describe('create wizard steps', () => {
+   it('builds three-step autos flow', () => {
+      expect(getCreateWizardStepKeysByFlow(CREATE_FLOW_CARS)).toEqual([
+         CREATE_WIZARD_STEP_AUTOS_PARAMETERS,
+         CREATE_WIZARD_STEP_AUTOS_OPTIONS,
+         CREATE_WIZARD_STEP_AD_DETAILS
+      ])
+   })
+
+   it('builds two-step parts flow with flow-specific first step', () => {
+      expect(getCreateWizardStepKeysByFlow(CREATE_FLOW_PARTS_CAR_TIRES)).toEqual([
+         CREATE_WIZARD_STEP_PARTS_TIRES_PARAMETERS,
+         CREATE_WIZARD_STEP_AD_DETAILS
+      ])
+      expect(getCreateWizardStepKeysByFlow(CREATE_FLOW_PARTS_CAR_DISKS)).toEqual([
+         CREATE_WIZARD_STEP_PARTS_DISKS_PARAMETERS,
+         CREATE_WIZARD_STEP_AD_DETAILS
+      ])
+      expect(getCreateWizardStepKeysByFlow(CREATE_FLOW_PARTS_MOTO_TIRES)).toEqual([
+         CREATE_WIZARD_STEP_PARTS_MOTO_TIRES_PARAMETERS,
+         CREATE_WIZARD_STEP_AD_DETAILS
+      ])
+      expect(getCreateWizardStepKeysByFlow(CREATE_FLOW_PARTS_FULL_WHEELS)).toEqual([
+         CREATE_WIZARD_STEP_PARTS_FULL_WHEELS_PARAMETERS,
+         CREATE_WIZARD_STEP_AD_DETAILS
+      ])
+      expect(getCreateWizardStepKeysByFlow(CREATE_FLOW_PARTS_MOTOR_OIL)).toEqual([
+         CREATE_WIZARD_STEP_PARTS_MOTOR_OIL_PARAMETERS,
+         CREATE_WIZARD_STEP_AD_DETAILS
+      ])
+      expect(getCreateWizardStepKeysByFlow(CREATE_FLOW_MOTO_MOTORCYCLES)).toEqual([
+         CREATE_WIZARD_STEP_MOTO_MOTORCYCLES_PARAMETERS,
+         CREATE_WIZARD_STEP_AD_DETAILS
+      ])
+      expect(getCreateWizardStepKeysByFlow(CREATE_FLOW_MOTO_SCOOTERS)).toEqual([
+         CREATE_WIZARD_STEP_MOTO_SCOOTERS_PARAMETERS,
+         CREATE_WIZARD_STEP_AD_DETAILS
+      ])
+   })
+})

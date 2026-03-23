@@ -1,70 +1,56 @@
-# frontendadmin административная часть Aligo
+# Aligo
 
-## Требования
+Фронтенд доски объявлений на Nuxt с разделами автомобилей, мототехники, автотоваров, профиля, чатов и отчётов.
 
-Для работы с проектом необходимо следующее программное обеспечение:
+## Сборка
 
-- Node.js: 20.15
-- npm: 8.19.4
-- Vue CLI: версия 5
+```bash
+# Production
+npm run build:prod
+npm run start:prod
 
-## Основные зависимости
+# Development
+npm run build:dev
+npm run start:dev
 
-| Зависимость                | Версия  |
-| -------------------------- | ------- |
-| @babel/core                | 7.26.10 |
-| @babel/eslint-parser       | 7.26.10 |
-| @codemirror/lang-xml       | 6.1.0   |
-| @codemirror/theme-one-dark | 6.1.2   |
-| @floating-ui/dom           | 1.6.13  |
-| @vue/cli-plugin-babel      | 5.0.8   |
-| @vue/cli-plugin-eslint     | 5.0.8   |
-| @vue/cli-plugin-router     | 5.0.8   |
-| @vue/cli-service           | 5.0.8   |
-| axios                      | 1.8.3   |
-| chart.js                   | 4.4.9   |
-| codemirror                 | 6.0.1   |
-| core-js                    | 3.41.0  |
-| date-fns                   | 4.1.0   |
-| dompurify                  | 3.2.6   |
-| eslint-plugin-vue          | 8.7.1   |
-| eslint                     | 7.32.0  |
-| lint-staged                | 11.2.6  |
-| lodash.debounce            | 4.0.8   |
-| pinia                      | 3.0.1   |
-| sass-loader                | 12.6.0  |
-| sass                       | 1.86.0  |
-| vue-codemirror             | 6.1.1   |
-| vue-dompurify-html         | 5.2.0   |
-| vue-input-otp              | 0.2.2   |
-| vue-intl                   | 6.5.25  |
-| vue-router                 | 4.5.0   |
-| vue-the-mask               | 0.11.1  |
-| vue                        | 3.5.13  |
-| vue3-cookies               | 1.0.6   |
-
-## Project setup
-
-```
-npm install
+# DevLocal
+npm run build:devlocal
+npm run start:devlocal
 ```
 
-### Compiles and hot-reloads for development
+## Переменные окружения
 
-```
-npm run serve
-```
+Используются файлы `.env.development`, `.env.production`, `.env.devlocal`.
 
-### Compiles and minifies for production
+Основные переменные:
 
-```
-npm run build
-```
+- `API_BASE_URL` — базовый URL API.
+- `API_TOKEN` — токен API.
+- `YANDEX_API_KEY` — ключ Yandex API.
 
-### Lints and fixes files
+## Проверки качества
 
-```
+```bash
+# Локально перед коммитом
+npm run check
+
+# Отдельные шаги
 npm run lint
+npm run typecheck
+npm test -- --run
 ```
 
-CLI VUE
+CI в `.github/workflows/ci.yml` запускает те же проверки и дополнительно сборку:
+
+```bash
+npm run build:dev
+```
+
+## Ключевая структура проекта
+
+- `pages/` — маршруты и страницы Nuxt.
+- `components/` — UI-компоненты и блоки страниц.
+- `composables/` — переиспользуемая логика.
+- `store/` — Pinia-сторы, включая create/edit/save слой.
+- `services/` — API-клиенты и утилиты.
+- `tests/` — unit тесты.

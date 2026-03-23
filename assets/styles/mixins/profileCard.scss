@@ -1,0 +1,27 @@
+@mixin shell($height: 120px) {
+   position: relative;
+   display: flex;
+   width: 100%;
+   height: $height;
+   background: #ffffff;
+   box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.14);
+   border-radius: 6px;
+   overflow: hidden;
+   transition:
+      transform 0.3s,
+      box-shadow 0.3s;
+}
+
+@mixin slider-image($width: 120px, $min-height: 120px) {
+   width: $width;
+   height: 100%;
+   display: flex;
+   align-items: center;
+
+   img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      min-height: $min-height;
+   }
+}
