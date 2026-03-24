@@ -108,8 +108,31 @@ export const canLoadCreateDraftForUser = ({ routeQuery = {}, userId }) => {
       return { canLoad: false, routeId: routeId || null }
    }
 
+   const moderationOwnerId = getRouteQueryScalar(
+      routeQuery,
+      'create_by_user_id'
+   )
+   if (
+      moderationOwnerId !== undefined &&
+      moderationOwnerId !== null &&
+      moderationOwnerId !== ''
+   ) {
+      return {
+         canLoad: true,
+         routeId
+      }
+   }
+
+   const routeOwnerId = getRouteQueryScalar(routeQuery, 'id_user_owner_ads')
+   if (routeOwnerId === undefined || routeOwnerId === null || routeOwnerId === '') {
+      return {
+         canLoad: false,
+         routeId
+      }
+   }
+
    return {
-      canLoad: true,
+      canLoad: String(routeOwnerId) === String(userId),
       routeId
    }
 }
@@ -158,14 +181,6 @@ export const buildCreateDraftRouteSyncQuery = ({
    const query = {
       id,
       id_user_owner_ads: ownerId
-   }
-
-    const createByUserId =
-      store?.create_by_user_id ??
-      getRouteQueryScalar(routeQuery, 'create_by_user_id') ??
-      ''
-   if (createByUserId) {
-      query.create_by_user_id = createByUserId
    }
 
    const routeMainCategoryId = readRouteQueryNumber(routeQuery, 'main_category_id')
@@ -250,7 +265,6 @@ export const hasCreateDraftRouteSyncChanged = ({
    comparableKeys = [
       'id',
       'id_user_owner_ads',
-      'create_by_user_id',
       'main_category_id',
       'sub_category_id',
       'last_category_id',

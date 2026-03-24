@@ -69,7 +69,7 @@ const shellCssVars = computed(() => ({
 
 .admin-shell__content--create,
 .admin-shell__content--auth {
-   padding-top: 0;
+   padding: 0;
    background-color: #ffffff;
 }
 
@@ -77,6 +77,10 @@ const shellCssVars = computed(() => ({
    .admin-shell__content {
       padding-top: var(--app-header-content-offset-mobile);
       padding-bottom: 94px;
+
+      &--auth {
+         padding: 0;
+      }
    }
 
    .admin-shell__content--create,

@@ -195,7 +195,7 @@ const handleRowAction = (actionKey, row) => {
 
 .table-shell__th-label {
    display: block;
-   color: var(--color-text-primary);
+  color: #3366FF;
    font-size: var(--font-size-12);
    line-height: var(--line-height-12);
    font-weight: 800;

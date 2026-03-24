@@ -20,13 +20,34 @@
          title="Объявление будет сохранено в черновики?"
          confirm-text="Сохранить"
          cancel-text="Отменить"
-         :confirm-disabled="!isAnyFieldFilled"
+         :confirm-disabled="!hasUnsavedChanges"
          :confirm-loading="isSaving"
          :cancel-disabled="isSaving"
          @confirm="saveAd"
          @cancel="closePopup"
          @close="closePopup"
-      />
+      >
+         <template #body>
+            <div class="save-popup-body">
+               <p class="save-popup-body__text">Вы изменили поля:</p>
+               <ul
+                  v-if="changedFieldLabels.length"
+                  class="save-popup-body__list"
+               >
+                  <li
+                     v-for="label in changedFieldLabels"
+                     :key="label"
+                     class="save-popup-body__item"
+                  >
+                     {{ label }}
+                  </li>
+               </ul>
+               <p v-else class="save-popup-body__text">
+                  Измененные поля не определены.
+               </p>
+            </div>
+         </template>
+      </PopupDialog>
    </div>
 </template>
 
@@ -43,7 +64,8 @@ const {
    isPublishing,
    isSaving,
    isLoading,
-   isAnyFieldFilled,
+   hasUnsavedChanges,
+   changedFieldLabels,
    isSavePopupOpen,
    handleSendAd,
    saveAd,
@@ -75,5 +97,30 @@ const {
    font-size: 14px;
    line-height: 18px;
    color: #787878;
+}
+
+.save-popup-body {
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+}
+
+.save-popup-body__text {
+   margin: 0;
+   font-size: 14px;
+   line-height: 20px;
+   color: var(--color-text-primary);
+}
+
+.save-popup-body__list {
+   margin: 0;
+   padding-left: 18px;
+   font-size: 14px;
+   line-height: 20px;
+   color: var(--color-text-secondary);
+}
+
+.save-popup-body__item {
+   margin: 0;
 }
 </style>

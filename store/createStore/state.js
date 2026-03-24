@@ -35,7 +35,8 @@ export const createInitialCreateState = () => ({
    ...createMaintenanceSection(),
    ...createOptionsIdsSection(),
    ...createOptionsFlagsSection(),
-   ...createAdSection()
+   ...createAdSection(),
+   initialStateSnapshot: null
 })
 
 export const createResetCreateState = () => {

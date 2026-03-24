@@ -96,16 +96,26 @@ const resolveStatusDescriptor = (source = {}) => {
          Number(source?.is_dismissed_from_publication) === 1
    }
 
-   if (flags.is_deleted) return { label: 'Удалено', tone: 'danger', flags }
-   if (flags.is_draft) return { label: 'Черновик', tone: 'muted', flags }
+   if (flags.is_deleted)
+      return { label: 'Удалено', tone: 'danger', flags }
+   if (flags.is_draft)
+      return { label: 'Черновик', tone: 'muted', flags }
    if (flags.is_in_archive) return { label: 'Архив', tone: 'muted', flags }
-   if (flags.is_closed) return { label: 'Закрыто', tone: 'neutral', flags }
-   if (flags.is_cancelled) return { label: 'Отклонено', tone: 'danger', flags }
+   if (flags.is_closed)
+      return { label: 'Закрыто', tone: 'neutral', flags }
+   if (flags.is_cancelled)
+      return { label: 'Отклонено', tone: 'danger', flags }
    if (flags.is_dismissed_from_publication) {
-      return { label: 'Снято с публикации', tone: 'warning', flags }
+      return {
+         label: 'Снято с публикации',
+         tone: 'warning',
+         flags
+      }
    }
-   if (flags.is_moderation) return { label: 'На модерации', tone: 'info', flags }
-   if (flags.is_published) return { label: 'Опубликовано', tone: 'success', flags }
+   if (flags.is_moderation)
+      return { label: 'На модерации', tone: 'info', flags }
+   if (flags.is_published)
+      return { label: 'Опубликовано', tone: 'success', flags }
 
    const textStatus = toOptionalString(
       pickFirstDefined(source?.status, source?.status_name, source?.state)
@@ -148,10 +158,19 @@ const normalizeUser = (item, index = 0) => {
    return {
       id,
       userId: id,
-      statusLabel: isBlocked ? 'Заблокирован' : isActive ? 'Активен' : 'Неактивен',
+      statusLabel: isBlocked
+         ? 'Заблокирован'
+         : isActive
+           ? 'Активен'
+           : 'Неактивен',
       statusTone: isBlocked ? 'danger' : isActive ? 'success' : 'muted',
       username: toOptionalString(
-         pickFirstDefined(item?.username, item?.name, item?.full_name, item?.fio)
+         pickFirstDefined(
+            item?.username,
+            item?.name,
+            item?.full_name,
+            item?.fio
+         )
       ),
       address: toOptionalString(item?.address),
       login: toOptionalString(item?.login),
@@ -182,6 +201,50 @@ const buildAdTitle = (item) => {
    )
    if (directTitle) return directTitle
 
+   const entity = item?.entity
+   const entityBrand = toOptionalString(entity?.brand?.title)
+   const entityModel = toOptionalString(entity?.model?.title)
+   const entityYear = toOptionalString(
+      pickFirstDefined(entity?.year?.title, entity?.year)
+   )
+   const entityType = toOptionalString(
+      pickFirstDefined(
+         entity?.type?.title,
+         entity?.type_disk?.title,
+         entity?.season?.title,
+         entity?.viscosity_sae?.title,
+         entity?.axle?.title
+      )
+   )
+   const entityWidth = toOptionalString(entity?.width?.title)
+   const entityHeight = toOptionalString(entity?.height?.title)
+   const entityDiameter = toOptionalString(entity?.diameter?.title)
+   const entitySize =
+      entityWidth || entityHeight || entityDiameter
+         ? [entityWidth, entityHeight].filter(Boolean).join('/') +
+           (entityDiameter ? ` R${entityDiameter}` : '')
+         : ''
+   const entityTitle = [entityBrand, entityModel, entityType, entitySize]
+      .filter(Boolean)
+      .join(' ')
+   if (entityTitle && entityYear) return `${entityTitle}, ${entityYear}`
+   if (entityTitle) return entityTitle
+   if (entityBrand || entityModel || entityYear) {
+      return [entityBrand, entityModel, entityYear].filter(Boolean).join(' ')
+   }
+
+   const productionBrand = toOptionalString(item?.production?.brand?.title)
+   const productionModel = toOptionalString(item?.production?.model?.title)
+   const productionYear = toOptionalString(
+      pickFirstDefined(item?.year?.title, item?.year)
+   )
+   const productionTitle = [productionBrand, productionModel]
+      .filter(Boolean)
+      .join(' ')
+   if (productionTitle && productionYear) return `${productionTitle}, ${productionYear}`
+   if (productionTitle) return productionTitle
+   if (productionYear) return productionYear
+
    const nestedBrand = toOptionalString(
       pickFirstDefined(
          item?.auto_technical_specifications?.[0]?.brand?.title,
@@ -200,7 +263,9 @@ const buildAdTitle = (item) => {
          item?.year_release?.title
       )
    )
-   const nestedTitle = [nestedBrand, nestedModel, nestedYear].filter(Boolean).join(' ')
+   const nestedTitle = [nestedBrand, nestedModel, nestedYear]
+      .filter(Boolean)
+      .join(' ')
    if (nestedTitle) return nestedTitle
 
    const brand = toOptionalString(
@@ -217,7 +282,12 @@ const buildAdTitle = (item) => {
 }
 
 const normalizeAd = (item, index = 0) => {
-   const autoId = pickFirstDefined(item?.auto_id, item?.ads_id, item?.id, index + 1)
+   const autoId = pickFirstDefined(
+      item?.auto_id,
+      item?.ads_id,
+      item?.id,
+      index + 1
+   )
    const status = resolveStatusDescriptor(item)
    const userName = toOptionalString(
       pickFirstDefined(
@@ -277,10 +347,11 @@ const normalizeAd = (item, index = 0) => {
       url: toOptionalString(item?.url),
       uniqueCode: toOptionalString(item?.unique_code),
       description: toOptionalString(item?.ads_parameter?.ads_description),
-      viewsCount:
-         toOptionalNumber(item?.statistic_view?.count_go_ad_page) ?? 0,
+      viewsCount: toOptionalNumber(item?.statistic_view?.count_go_ad_page) ?? 0,
       contactsCount:
-         toOptionalNumber(item?.statistic_view?.count_who_view_seller_contact) ?? 0,
+         toOptionalNumber(
+            item?.statistic_view?.count_who_view_seller_contact
+         ) ?? 0,
       historyChangeStatus: Array.isArray(item?.history_change_status)
          ? item.history_change_status
          : [],
@@ -339,7 +410,12 @@ const buildAdsParams = (filters = {}) => {
          params[key] = 1
          continue
       }
-      if (value === false || value === null || value === undefined || value === '') {
+      if (
+         value === false ||
+         value === null ||
+         value === undefined ||
+         value === ''
+      ) {
          continue
       }
       params[key] = value
@@ -380,6 +456,16 @@ const buildCreateUserFormData = (payload = {}) => {
    return formData
 }
 
+const buildUpdateUserFormData = (payload = {}) => {
+   const formData = buildCreateUserFormData(payload)
+
+   if (payload.photo === null) {
+      formData.append('photo', '')
+   }
+
+   return formData
+}
+
 export const getModerationUsers = async () => {
    return executeApiRequest(
       async () => {
@@ -391,28 +477,36 @@ export const getModerationUsers = async () => {
          return items.map(normalizeUser)
       },
       {
-         errorMessage: 'Ошибка при загрузке списка пользователей.'
+         errorMessage:
+            'Ошибка при загрузке списка пользователей.'
       }
    )
 }
 
 export const getModerationUserById = async (userId) => {
-   const result = await getModerationUsers()
-   if (result?.success === false) return result
+   return executeApiRequest(
+      async () => {
+         const apiClient = getApiClient()
+         const normalizedUserId = String(userId || '').trim()
+         const response = await apiClient.get(
+            `/moderations/action_with_users/show/${encodeURIComponent(normalizedUserId)}`
+         )
+         const body = getResponseBody(response)
+         const data = getResponseDataField(response) || body?.data || body
 
-   const normalizedUserId = String(userId || '').trim()
-   const matchedUser = (Array.isArray(result) ? result : []).find(
-      (item) => String(item.userId || item.id) === normalizedUserId
-   )
+         if (!data || typeof data !== 'object') {
+            return {
+               success: false,
+               message: `Пользователь #${normalizedUserId} не найден.`
+            }
+         }
 
-   if (!matchedUser) {
-      return {
-         success: false,
-         message: `Пользователь #${normalizedUserId} не найден.`
+         return normalizeUser(data)
+      },
+      {
+         errorMessage: `Ошибка при загрузке пользователя #${String(userId || '').trim()}.`
       }
-   }
-
-   return matchedUser
+   )
 }
 
 export const createModerationUser = async (payload) => {
@@ -437,11 +531,39 @@ export const createModerationUser = async (payload) => {
          }
       },
       {
-         errorMessage: 'Ошибка при создании пользователя.'
+         errorMessage:
+            'Ошибка при создании пользователя.'
       }
    )
 }
 
+export const updateModerationUser = async (userId, payload) => {
+   return executeApiRequest(
+      async () => {
+         const apiClient = getApiClient('apiClientData')
+         const normalizedUserId = String(userId || '').trim()
+         const response = await apiClient.post(
+            `/moderations/action_with_users/update/${encodeURIComponent(normalizedUserId)}`,
+            buildUpdateUserFormData(payload),
+            {
+               headers: { 'Content-Type': 'multipart/form-data' }
+            }
+         )
+
+         return {
+            success: isApiRequestSuccessful(getResponseBody(response)),
+            message: getApiResponseMessage(
+               getResponseBody(response),
+               'Пользователь обновлен.'
+            ),
+            data: getResponseDataField(response) || getResponseBody(response)
+         }
+      },
+      {
+         errorMessage: `Ошибка при обновлении пользователя #${String(userId || '').trim()}.`
+      }
+   )
+}
 export const getModerationAds = async (filters = {}) => {
    return executeApiRequest(
       async () => {
@@ -459,7 +581,8 @@ export const getModerationAds = async (filters = {}) => {
          }
       },
       {
-         errorMessage: 'Ошибка при загрузке объявлений.'
+         errorMessage:
+            'Ошибка при загрузке объявлений.'
       }
    )
 }
@@ -508,19 +631,22 @@ export const archiveModerationAd = async (payload = {}) =>
    executeModerationAdAction({
       endpoint: '/moderations/all_ads/add_to_archive',
       payload,
-      successMessage: 'Не удалось архивировать объявление.'
+      successMessage:
+         'Не удалось архивировать объявление.'
    })
 
 export const publishAgainModerationAd = async (payload = {}) =>
    executeModerationAdAction({
       endpoint: '/moderations/all_ads/publish_again',
       payload,
-      successMessage: 'Не удалось повторно опубликовать объявление.'
+      successMessage:
+         'Не удалось повторно опубликовать объявление.'
    })
 
 export const takeOffPublicationModerationAd = async (payload = {}) =>
    executeModerationAdAction({
       endpoint: '/moderations/all_ads/take_off_publication',
       payload,
-      successMessage: 'Не удалось снять объявление с публикации.'
+      successMessage:
+         'Не удалось снять объявление с публикации.'
    })

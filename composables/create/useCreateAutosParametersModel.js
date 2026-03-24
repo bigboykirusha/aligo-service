@@ -144,6 +144,13 @@ export const useCreateAutosParametersModel = () => {
          } else if (hasAutoInfoValues.value) {
             cascadeModel.setAutoInfoLocked(true)
          }
+
+         // For edit flows, auto specs can arrive in a second async patch
+         // after the initial store hydration. Refresh the dirty baseline
+         // only after all dependent auto data has finished loading.
+         if (createStore.id) {
+            createStore.markCurrentStateAsInitial()
+         }
       } catch (error) {
          console.error('Create: failed to load autos parameters options:', error)
       } finally {

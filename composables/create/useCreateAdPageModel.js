@@ -46,14 +46,6 @@ const getQueryScalar = (query, key) => {
    return Array.isArray(value) ? value[0] : value
 }
 
-const resolveDraftOwnerId = (draft = {}) =>
-   normalizeEntityId(
-      draft?.id_user_owner_ads ??
-         draft?.idUserOwnerAds ??
-         draft?.user?.id ??
-         draft?.ads_parameter?.user_id
-   )
-
 export const useCreateAdPageModel = () => {
    const createStore = useCreateStore()
    const moderationCreateStore = useModerationCreateStore()
@@ -71,6 +63,8 @@ export const useCreateAdPageModel = () => {
    const skipLeaveAutosaveOnce = ref(false)
 
    const isAnyFieldFilled = computed(() => createStore.isAnyFieldFilled)
+   const hasUnsavedChanges = computed(() => createStore.hasUnsavedChanges)
+   const changedFieldLabels = computed(() => createStore.changedFieldLabels)
    const isSavePopupOpen = computed(() =>
       modalStore.isVisible(SAVE_AD_EXIT_MODAL_ID)
    )
@@ -285,6 +279,8 @@ export const useCreateAdPageModel = () => {
          if (!createStore.condition_id && routeConditionId) {
             createStore.condition_id = routeConditionId
          }
+
+         createStore.markCurrentStateAsInitial()
       } finally {
          isLoading.value = false
       }
@@ -335,6 +331,8 @@ export const useCreateAdPageModel = () => {
       isSaving,
       isLoading,
       isAnyFieldFilled,
+      hasUnsavedChanges,
+      changedFieldLabels,
       isSavePopupOpen,
       handleSendAd,
       saveAd,

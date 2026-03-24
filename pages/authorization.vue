@@ -4,14 +4,47 @@
 
       <div class="authorization-page__layout">
          <div class="authorization-page__visual">
-            <img class="authorization-page__image" src="@/assets/images/aligo-banner.png" alt="Aligo">
+            <img
+               class="authorization-page__image"
+               src="@/assets/images/aligo-banner.png"
+               alt="Aligo"
+            />
+
+            <div
+               class="authorization-page__hints"
+               aria-label="Подсказки по работе в сервисе"
+            >
+               <div
+                  v-for="(hint, index) in authorizationHints"
+                  :key="hint.title"
+                  class="authorization-page__hint-card"
+                  :class="{
+                     'authorization-page__hint-card--active':
+                        index === activeHintIndex
+                  }"
+               >
+                  <span class="authorization-page__hint-step">
+                     {{ hint.step }}
+                  </span>
+                  <strong class="authorization-page__hint-title">
+                     {{ hint.title }}
+                  </strong>
+                  <p class="authorization-page__hint-text">
+                     {{ hint.text }}
+                  </p>
+               </div>
+            </div>
          </div>
          <div class="authorization-card">
             <div class="authorization-card__header">
-               <img src="@/assets/icons/a-id.svg" alt="Aligo ID">
+               <img src="@/assets/icons/a-id.svg" alt="Aligo ID" />
             </div>
 
-            <form class="authorization-form" @submit.prevent="sendCodeRequest" @keydown.enter="handleEnter">
+            <form
+               class="authorization-form"
+               @submit.prevent="sendCodeRequest"
+               @keydown.enter="handleEnter"
+            >
                <div class="authorization-form__section">
                   <Transition name="modal-instant">
                      <div v-show="!showCodeInput" class="input-wrapper">
@@ -19,14 +52,27 @@
                            Введите номер телефона
                         </p>
                         <p class="input-wrapper__description">
-                           Мы отправим вам код подтверждения для входа в аккаунт.
+                           Мы отправим вам код подтверждения для входа в
+                           аккаунт.
                         </p>
 
-                        <input ref="phoneInput" type="tel" :value="formattedPhone" class="phone-input"
-                           autocomplete="tel" autofocus @input="onPhoneInput" @paste="onPhonePaste"
-                           @keydown="onPhoneKeydown" @focus="onPhoneFocus">
+                        <input
+                           ref="phoneInput"
+                           type="tel"
+                           :value="formattedPhone"
+                           class="phone-input"
+                           autocomplete="tel"
+                           autofocus
+                           @input="onPhoneInput"
+                           @paste="onPhonePaste"
+                           @keydown="onPhoneKeydown"
+                           @focus="onPhoneFocus"
+                        />
 
-                        <p v-if="contactInfoError && !showCodeInput" class="error-message">
+                        <p
+                           v-if="contactInfoError && !showCodeInput"
+                           class="error-message"
+                        >
                            {{ contactInfoError }}
                         </p>
                      </div>
@@ -37,18 +83,33 @@
                         <p class="input-wrapper__title">Введите код</p>
                         <p class="input-wrapper__description">
                            Мы отправили вам код подтверждения на номер
+                           <br />
                            {{ formattedPhoneNumber }}
-                           <span class="input-wrapper__description--link" @click.prevent="switchTab">
-                              <br>
+                           <span
+                              class="input-wrapper__description--link"
+                              @click.prevent="switchTab"
+                           >
+                              <br />
                               Изменить номер
                            </span>
                         </p>
 
-                        <OtpInput ref="otpRef" v-model="code" :length="4" :error="hasError" :full-width="true"
-                           @complete="confirmCode" />
+                        <OtpInput
+                           ref="otpRef"
+                           v-model="code"
+                           :length="4"
+                           :error="hasError"
+                           :full-width="true"
+                           @complete="confirmCode"
+                        />
 
-                        <div class="modal-loading-state" :class="{ 'modal-loading-state--visible': isLoading }"
-                           aria-live="polite">
+                        <div
+                           class="modal-loading-state"
+                           :class="{
+                              'modal-loading-state--visible': isLoading
+                           }"
+                           aria-live="polite"
+                        >
                            <LoaderUI :size="20" />
                            <span>Проверяем код...</span>
                         </div>
@@ -62,31 +123,53 @@
                   Отправить повторно можно через {{ formattedTime }}
                </p>
 
-               <UIButton v-show="!showCodeInput && !(timeLeft > 0)" :disabled="isContactInfoInvalid || isLoading"
-                  :loading="isLoading" variant="primary" @click="sendCodeRequest">
+               <UIButton
+                  v-show="!showCodeInput && !(timeLeft > 0)"
+                  :disabled="isContactInfoInvalid || isLoading"
+                  :loading="isLoading"
+                  variant="primary"
+                  @click="sendCodeRequest"
+               >
                   Отправить
                </UIButton>
 
                <p class="agreement-text">
                   Вы также соглашаетесь с
-                  <a class="agreement-link" :href="termsLink" target="_blank" rel="noopener">
+                  <a
+                     class="agreement-link"
+                     :href="termsLink"
+                     target="_blank"
+                     rel="noopener"
+                  >
                      правилами Aligo
                   </a>
                   и
-                  <a class="agreement-link" :href="privacyLink" target="_blank" rel="noopener">
-                     политикой обработки персональных данных
-                  </a>.
+                  <a
+                     class="agreement-link"
+                     :href="privacyLink"
+                     target="_blank"
+                     rel="noopener"
+                  >
+                     политикой обработки персональных данных </a
+                  >.
                </p>
-
             </div>
 
-            <div v-else class="authorization-card__footer authorization-card__footer--otp">
+            <div
+               v-else
+               class="authorization-card__footer authorization-card__footer--otp"
+            >
                <p v-if="timeLeft > 0" class="timer-message">
                   Получить новый код можно через {{ formattedTime }}
                </p>
 
-               <UIButton v-else variant="ghost" :loading="isLoading" :disabled="isLoading"
-                  @click.prevent="sendCodeRequest">
+               <UIButton
+                  v-else
+                  variant="ghost"
+                  :loading="isLoading"
+                  :disabled="isLoading"
+                  @click.prevent="sendCodeRequest"
+               >
                   Получить новый код
                </UIButton>
             </div>
@@ -106,7 +189,10 @@ import { useOtpError } from '~/composables/useOtpError'
 import { usePopupErrorStore } from '~/store/popupErrorStore'
 import { useDocumentsStore } from '~/store/documents'
 import { useUserStore } from '~/store/user'
-import { getApiResponseMessage, isApiRequestSuccessful } from '@/services/apiUtils'
+import {
+   getApiResponseMessage,
+   isApiRequestSuccessful
+} from '@/services/apiUtils'
 import OtpInput from '~/components/ui/OtpInput.vue'
 import UIButton from '~/components/ui/UIButton.vue'
 import LoaderUI from '~/components/ui/LoaderUI.vue'
@@ -121,6 +207,24 @@ const config = useRuntimeConfig()
 const userStore = useUserStore()
 const popupErrorStore = usePopupErrorStore()
 const documentsStore = useDocumentsStore()
+
+const authorizationHints = Object.freeze([
+   {
+      step: '01',
+      title: 'Создавайте пользователей',
+      text: 'На главной можно быстро завести профиль с городом, адресом, телефоном и фото.'
+   },
+   {
+      step: '02',
+      title: 'Публикуйте от имени пользователя',
+      text: 'Из карточки пользователя можно сразу перейти в flow создания объявления от его имени.'
+   },
+   {
+      step: '03',
+      title: 'Следите за объявлениями',
+      text: 'Во вкладке объявлений доступны фильтры, статусы, редактирование и действия по публикации.'
+   }
+])
 
 const sanitizeRedirectPath = (value) => {
    const raw = typeof value === 'string' ? value.trim() : ''
@@ -143,8 +247,13 @@ const {
    validatePhone
 } = usePhoneMask('')
 
-const { timeLeft, formattedTime, start: startTimer, restore: restoreTimer, stop: stopTimer } =
-   useResendTimer({ keyPrefix: 'login_phone' })
+const {
+   timeLeft,
+   formattedTime,
+   start: startTimer,
+   restore: restoreTimer,
+   stop: stopTimer
+} = useResendTimer({ keyPrefix: 'login_phone' })
 const { hasError, flash: flashOtpError } = useOtpError()
 
 const phoneInput = ref(null)
@@ -153,11 +262,15 @@ const code = ref('')
 const showCodeInput = ref(false)
 const isLoading = ref(false)
 const contactInfoError = ref('')
+const activeHintIndex = ref(0)
+let hintRotationTimer = null
 
 const validatePhoneNumber = (phone) => validatePhone(phone)
 
 const termsLink = computed(() => {
-   const doc = documentsStore.documentByTitle('Условия использования сервиса Aligo')
+   const doc = documentsStore.documentByTitle(
+      'Условия использования сервиса Aligo'
+   )
    return doc?.path
       ? `${config.public.apiBaseUrl}/${doc.path}`
       : `${config.public.apiBaseUrl}/documents/terms-of-use-16-09-25.pdf`
@@ -251,7 +364,8 @@ const extractLoginCode = (response) => {
    ]
 
    const value = candidates.find(
-      (item) => item !== null && item !== undefined && String(item).trim() !== ''
+      (item) =>
+         item !== null && item !== undefined && String(item).trim() !== ''
    )
 
    return value ? String(value).trim() : null
@@ -270,7 +384,8 @@ const buildPhoneRequestData = () => {
 }
 
 const sendCodeRequest = async () => {
-   if (isLoading.value || isContactInfoInvalid.value || timeLeft.value > 0) return
+   if (isLoading.value || isContactInfoInvalid.value || timeLeft.value > 0)
+      return
 
    isLoading.value = true
    contactInfoError.value = ''
@@ -375,10 +490,22 @@ onMounted(() => {
       setFocusOnInput()
       setTimeout(setFocusOnInput, 120)
    })
+
+   if (import.meta.client && window.innerWidth > 960) {
+      hintRotationTimer = window.setInterval(() => {
+         activeHintIndex.value =
+            (activeHintIndex.value + 1) % authorizationHints.length
+      }, 3400)
+   }
 })
 
 onBeforeUnmount(() => {
    stopTimer()
+
+   if (hintRotationTimer) {
+      window.clearInterval(hintRotationTimer)
+      hintRotationTimer = null
+   }
 })
 
 watch(showCodeInput, () => {
@@ -395,8 +522,16 @@ watch(showCodeInput, () => {
    min-height: 100dvh;
    padding: 16px;
    background:
-      radial-gradient(circle at top right, rgba(255, 255, 255, 0.18), transparent 26%),
-      radial-gradient(circle at bottom left, rgba(17, 24, 39, 0.14), transparent 30%),
+      radial-gradient(
+         circle at top right,
+         rgba(255, 255, 255, 0.18),
+         transparent 26%
+      ),
+      radial-gradient(
+         circle at bottom left,
+         rgba(17, 24, 39, 0.14),
+         transparent 30%
+      ),
       #3366ff;
 }
 
@@ -425,8 +560,10 @@ watch(showCodeInput, () => {
 
 .authorization-page__visual {
    display: flex;
+   flex-direction: column;
    align-items: center;
    justify-content: center;
+   gap: 24px;
    min-height: 310px;
 }
 
@@ -436,6 +573,82 @@ watch(showCodeInput, () => {
    height: auto;
    object-fit: contain;
    filter: drop-shadow(0 24px 54px rgba(10, 20, 60, 0.32));
+}
+
+.authorization-page__visual-copy {
+   display: flex;
+   flex-direction: column;
+   gap: 12px;
+   width: 100%;
+   max-width: 520px;
+}
+
+.authorization-page__lead {
+   max-width: 500px;
+   margin: 0;
+   color: #ffffff;
+   font-size: 16px;
+   font-weight: 700;
+   line-height: 20px;
+}
+
+.authorization-page__hints {
+   display: grid;
+   grid-template-columns: repeat(3, minmax(0, 1fr));
+   gap: 16px;
+   width: 100%;
+}
+
+.authorization-page__hint-card {
+   position: relative;
+   display: flex;
+   flex-direction: column;
+   gap: 8px;
+   min-height: 156px;
+   padding: 18px 18px 16px;
+   border: 1px solid rgba(255, 255, 255, 0.1);
+   border-radius: 22px;
+   background: rgba(255, 255, 255, 0.06);
+   backdrop-filter: blur(18px);
+   opacity: 0.52;
+   transform: translateY(0) scale(0.99);
+   transition:
+      opacity 0.35s ease,
+      transform 0.35s ease,
+      border-color 0.35s ease,
+      background-color 0.35s ease,
+      box-shadow 0.35s ease;
+}
+
+.authorization-page__hint-card--active {
+   opacity: 0.96;
+   transform: translateY(-2px) scale(1);
+   border-color: rgba(255, 255, 255, 0.18);
+   background: rgba(255, 255, 255, 0.12);
+   box-shadow: 0 18px 40px rgba(7, 21, 64, 0.14);
+}
+
+.authorization-page__hint-step {
+   color: rgba(255, 255, 255, 0.42);
+   font-size: 11px;
+   line-height: 12px;
+   letter-spacing: 0.16em;
+   text-transform: uppercase;
+}
+
+.authorization-page__hint-title {
+   color: #ffffff;
+   font-size: 16px;
+   line-height: 21px;
+   font-weight: 600;
+   letter-spacing: -0.02em;
+}
+
+.authorization-page__hint-text {
+   margin: 0;
+   color: rgba(255, 255, 255, 0.68);
+   font-size: 13px;
+   line-height: 19px;
 }
 
 .authorization-card {
@@ -584,36 +797,89 @@ watch(showCodeInput, () => {
    opacity: 0;
 }
 
+@media (min-width: 961px) {
+   .authorization-page__layout {
+      grid-template-columns: minmax(0, 1.15fr) minmax(380px, 460px);
+      align-items: stretch;
+      gap: 42px;
+      max-width: 1280px;
+      padding: 0 24px;
+   }
+
+   .authorization-page__visual {
+      align-items: flex-start;
+      height: 100%;
+   }
+
+   .authorization-card {
+      height: 100%;
+      min-height: 100%;
+      padding: 30px;
+   }
+}
+
 @media (max-width: 960px) {
    .authorization-page {
       display: flex;
-      align-items: stretch;
+      align-items: center;
       box-sizing: border-box;
-      padding: 120px 16px;
+      padding: 40px 16px;
    }
 
    .authorization-page__layout {
       grid-template-columns: minmax(0, 1fr);
-      grid-template-rows: auto minmax(0, 1fr);
+      grid-template-areas:
+         'card'
+         'visual';
+      grid-template-rows: minmax(0, 1fr) auto;
       align-content: stretch;
       gap: 24px;
-      min-height: 100%;
+      height: calc(100dvh - 80px);
       max-width: 100%;
       padding: 0;
    }
 
    .authorization-page__visual {
-      min-height: 220px;
-      padding: 20px;
+      grid-area: visual;
+      min-height: 0;
+      padding: 0;
       border-radius: 24px;
    }
 
+   .authorization-page__visual-copy {
+      display: none;
+   }
+
+   .authorization-page__image {
+      display: none;
+   }
+
+   .authorization-page__hints {
+      grid-template-columns: minmax(0, 1fr);
+   }
+
+   .authorization-page__hint-card {
+      min-height: 0;
+      padding: 16px 16px 14px;
+      opacity: 0.92;
+      background: rgba(255, 255, 255, 0.08);
+   }
+
+   .authorization-page__hint-card--active {
+      transform: none;
+      opacity: 1;
+   }
+
+   .authorization-page__hint-text {
+      color: rgba(255, 255, 255, 0.8);
+   }
+
    .authorization-card {
+      grid-area: card;
       min-height: 0;
       height: 100%;
       padding: 24px;
       border-radius: 24px;
    }
-
 }
 </style>

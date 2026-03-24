@@ -21,7 +21,12 @@ import {
    isAdFieldsFilled as isAdFieldsFilledByFlow,
    isCharacteristicFieldsFilled as isCharacteristicFieldsFilledByFlow
 } from './createStore/validation'
-import { isAnyCreateFieldFilled } from './createStore/getters'
+import {
+   buildCreateDirtyCheckSnapshot,
+   getCreateChangedFieldLabels,
+   hasCreateUnsavedChanges,
+   isAnyCreateFieldFilled
+} from './createStore/getters'
 import { getCreateTabsByFlow } from './createStore/tabs'
 import {
    autoSaveCreateField,
@@ -76,9 +81,15 @@ export const useCreateStore = defineStore('create', {
       isCharacteristicFieldsFilled: (state) =>
          isCharacteristicFieldsFilledByFlow(state),
       isAdFieldsFilled: (state) => isAdFieldsFilledByFlow(state),
-      isAnyFieldFilled: (state) => isAnyCreateFieldFilled(state)
+      isAnyFieldFilled: (state) => isAnyCreateFieldFilled(state),
+      hasUnsavedChanges: (state) => hasCreateUnsavedChanges(state),
+      changedFieldLabels: (state) => getCreateChangedFieldLabels(state)
    },
    actions: {
+      markCurrentStateAsInitial() {
+         this.initialStateSnapshot = buildCreateDirtyCheckSnapshot(this.$state)
+      },
+
       setCreateFlow(flow = CREATE_FLOW_CARS) {
          setCreateFlowState({ store: this, flow })
       },
@@ -160,6 +171,7 @@ export const useCreateStore = defineStore('create', {
 
       resetParams() {
          resetCreateStoreState({ store: this })
+         this.markCurrentStateAsInitial()
       },
 
       setActiveTab(index) {

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
    <section class="admin-page">
       <header class="admin-page__hero">
          <div>
@@ -11,8 +11,12 @@
 
          <UIButton :block="false" variant="primary" @click="toggleCreatePanel">
             <span class="button-inline">
-               <img :src="addIcon" alt="" class="button-inline__icon">
-            {{ isCreateOpen ? 'Скрыть форму' : 'Создать пользователя' }}
+               <img
+                  :src="createPanelToggleIcon"
+                  alt=""
+                  class="button-inline__icon"
+               />
+               {{ createPanelToggleText }}
             </span>
          </UIButton>
       </header>
@@ -20,10 +24,8 @@
       <section v-if="isCreateOpen" class="create-panel">
          <div class="create-panel__head">
             <div>
-               <h2 class="create-panel__title">Новый пользователь</h2>
-               <p class="create-panel__text">
-                  Обязательные поля: имя, город, адрес и телефон.
-               </p>
+               <h2 class="create-panel__title">{{ createPanelTitle }}</h2>
+               <p class="create-panel__text">{{ createPanelText }}</p>
             </div>
          </div>
 
@@ -33,7 +35,7 @@
 
                <div class="create-form__avatar">
                   <div class="create-form__avatar-preview">
-                     <img :src="avatarPreviewSrc" alt="Аватар пользователя">
+                     <img :src="avatarPreviewSrc" alt="Аватар пользователя" />
                   </div>
 
                   <div class="create-form__avatar-copy">
@@ -59,12 +61,12 @@
                   type="file"
                   accept=".jpg,.jpeg,.png,.webp,.avif,.heic,.heif"
                   @change="handlePhotoChange"
-               >
+               />
             </div>
 
             <label class="form-field">
                <span>Псевдоним</span>
-               <input v-model.trim="createForm.username" type="text" required>
+               <input v-model.trim="createForm.username" type="text" required />
             </label>
 
             <div class="form-field">
@@ -108,7 +110,7 @@
                   @keydown="onPhoneKeydown"
                   @focus="onPhoneFocus"
                   @keydown.backspace="handlePhoneBackspace"
-               >
+               />
             </label>
 
             <label class="form-field">
@@ -119,16 +121,31 @@
                   inputmode="email"
                   placeholder="name@example.com"
                   @input="handleEmailInput"
-               >
+               />
             </label>
 
-            <input v-model="createForm.city_id" class="create-form__hidden" type="hidden">
-            <input v-model="createForm.latitude" class="create-form__hidden" type="hidden">
-            <input v-model="createForm.longitude" class="create-form__hidden" type="hidden">
+            <input
+               v-model="createForm.city_id"
+               class="create-form__hidden"
+               type="hidden"
+            />
+            <input
+               v-model="createForm.latitude"
+               class="create-form__hidden"
+               type="hidden"
+            />
+            <input
+               v-model="createForm.longitude"
+               class="create-form__hidden"
+               type="hidden"
+            />
 
             <div class="create-form__footer">
                <div class="create-form__messages">
-                  <p v-if="createError" class="form-message form-message--error">
+                  <p
+                     v-if="createError"
+                     class="form-message form-message--error"
+                  >
                      {{ createError }}
                   </p>
                </div>
@@ -139,7 +156,7 @@
                   variant="primary"
                   :loading="isSubmitting"
                >
-                  Создать пользователя
+                  {{ submitButtonText }}
                </UIButton>
             </div>
          </form>
@@ -152,7 +169,7 @@
                v-model.trim="searchQuery"
                type="text"
                placeholder="Имя, телефон, email, логин"
-            >
+            />
          </label>
 
          <div class="filters-panel__field">
@@ -172,8 +189,8 @@
                class="filters-panel__action-button"
             >
                <span class="button-inline">
-                  <img :src="searchIcon" alt="" class="button-inline__icon">
-               Поиск
+                  <img :src="searchIcon" alt="" class="button-inline__icon" />
+                  Показать
                </span>
             </UIButton>
 
@@ -185,7 +202,7 @@
                @click="resetUserFilters"
             >
                <span class="button-inline">
-                  <img :src="refreshIcon" alt="" class="button-inline__icon">
+                  <img :src="refreshIcon" alt="" class="button-inline__icon" />
                   Сбросить
                </span>
             </UIButton>
@@ -196,7 +213,9 @@
          <div class="notice__content">
             <div>
                <strong>{{ successPromptMessage }}</strong>
-               <p>Хотите сразу создать объявление от имени этого пользователя?</p>
+               <p v-if="successPromptUserId">
+                  Хотите сразу создать объявление от имени этого пользователя?
+               </p>
             </div>
 
             <UIButton
@@ -237,17 +256,22 @@ import { useRouter } from '#app'
 import addIcon from '@/assets/icons/add.svg'
 import addPublicationIcon from '@/assets/icons/new/ad-icon.svg'
 import avatarFallbackIcon from '@/assets/icons/avatar-revers.svg'
+import closeIcon from '@/assets/icons/close-white.svg'
 import editIcon from '@/assets/icons/new/ads-icon.svg'
 import refreshIcon from '@/assets/icons/clear.svg'
 import searchIcon from '@/assets/icons/search.svg'
+import edit2Icon from '@/assets/icons/edit.svg'
 import AutosAddressInput from '@/components/AutosAddressInput.vue'
 import CustomTable from '@/components/table/CustomTable.vue'
 import UIButton from '@/components/ui/UIButton.vue'
 import SelectUI from '@/components/ui/SelectUI.vue'
 import { usePhoneMask } from '@/composables/usePhoneMask'
+import { getUserAvatarUrl } from '@/services/imageUtils'
 import {
    createModerationUser,
-   getModerationUsers
+   getModerationUserById,
+   getModerationUsers,
+   updateModerationUser
 } from '@/services/api/moderationApi'
 import { validateEmail, validatePhoneNumber } from '@/services/validation'
 import { useModalStore } from '@/store/modalStore'
@@ -262,6 +286,8 @@ const users = ref([])
 const isLoading = ref(false)
 const isSubmitting = ref(false)
 const isCreateOpen = ref(false)
+const isEditMode = ref(false)
+const editingUserId = ref(null)
 const errorMessage = ref('')
 const createError = ref('')
 const successPromptMessage = ref('')
@@ -273,6 +299,7 @@ const perPage = ref(10)
 const photoFile = ref(null)
 const photoInputRef = ref(null)
 const photoPreviewUrl = ref('')
+const shouldRemovePhoto = ref(false)
 
 const createForm = reactive({
    username: '',
@@ -307,6 +334,27 @@ const selectedCityLabel = computed(
    () => createForm.city_name || 'Выберите город'
 )
 
+const createPanelTitle = computed(() =>
+   isEditMode.value ? 'Редактирование пользователя' : 'Новый пользователь'
+)
+
+const createPanelText = computed(() =>
+   isEditMode.value
+      ? 'Измените имя, город, адрес, телефон, email и фото профиля.'
+      : 'Обязательные поля: имя, город, адрес и телефон.'
+)
+
+const submitButtonText = computed(() =>
+   isEditMode.value ? 'Сохранить изменения' : 'Создать пользователя'
+)
+
+const createPanelToggleText = computed(() =>
+   isCreateOpen.value ? 'Скрыть форму' : 'Создать пользователя'
+)
+
+const createPanelToggleIcon = computed(() =>
+   isCreateOpen.value ? closeIcon : addIcon
+)
 const formatDate = (value) => {
    if (!value) return '-'
    const date = new Date(value)
@@ -378,6 +426,7 @@ const columns = computed(() => [
       nowrap: true,
       columnClass: 'menu',
       menuItems: () => [
+         { key: 'edit_user', text: 'Редактировать', icon: edit2Icon },
          { key: 'open_ads', text: 'Объявления', icon: editIcon },
          {
             key: 'create_for_user',
@@ -432,7 +481,9 @@ const paginatedUsers = computed(() => {
 
 const revokePhotoPreview = () => {
    if (!photoPreviewUrl.value) return
-   URL.revokeObjectURL(photoPreviewUrl.value)
+   if (photoPreviewUrl.value.startsWith('blob:')) {
+      URL.revokeObjectURL(photoPreviewUrl.value)
+   }
    photoPreviewUrl.value = ''
 }
 
@@ -446,6 +497,9 @@ const resetForm = () => {
    createForm.latitude = ''
    createForm.longitude = ''
    photoFile.value = null
+   shouldRemovePhoto.value = false
+   isEditMode.value = false
+   editingUserId.value = null
    phoneRaw.value = ''
    createError.value = ''
 
@@ -493,7 +547,10 @@ const toggleCreatePanel = () => {
 
    if (isCreateOpen.value) {
       resetForm()
+      return
    }
+
+   resetForm()
 }
 
 const triggerPhotoInput = () => {
@@ -530,6 +587,7 @@ const handlePhotoChange = (event) => {
 
    createError.value = ''
    photoFile.value = file
+   shouldRemovePhoto.value = false
    revokePhotoPreview()
    photoPreviewUrl.value = URL.createObjectURL(file)
 }
@@ -552,6 +610,16 @@ const normalizePhoneForApi = (value) => {
    return `+${normalizedDigits}`
 }
 
+const normalizePhoneForMask = (value) => {
+   let digits = String(value || '').replace(/\D/g, '')
+
+   if (digits.startsWith('8') || digits.startsWith('7')) {
+      digits = digits.slice(1)
+   }
+
+   return digits.slice(0, 10)
+}
+
 const resolveCreatedModerationUserId = (payload) => {
    const candidates = [
       payload?.id,
@@ -571,6 +639,10 @@ const resolveCreatedModerationUserId = (payload) => {
    }
 
    return null
+}
+
+const resolveUserPhotoUrl = (user) => {
+   return getUserAvatarUrl(user?.photo, avatarFallbackIcon)
 }
 
 const handleAddressChange = (value) => {
@@ -606,6 +678,49 @@ const openCityModal = () => {
    })
 }
 
+const startEditUser = async (userId) => {
+   const normalizedUserId = Number(userId)
+   if (!Number.isFinite(normalizedUserId) || normalizedUserId <= 0) return
+
+   isSubmitting.value = true
+   createError.value = ''
+   successPromptMessage.value = ''
+   successPromptUserId.value = null
+
+   const result = await getModerationUserById(normalizedUserId)
+   isSubmitting.value = false
+
+   if (result?.success === false) {
+      createError.value =
+         result.message ||
+         `Не удалось загрузить пользователя #${normalizedUserId}.`
+      isCreateOpen.value = true
+      return
+   }
+
+   const user = result || {}
+
+   resetForm()
+   createForm.username = String(user.username || '')
+   createForm.address = String(user.address || '')
+   createForm.email = String(user.email || '')
+   createForm.phone = String(user.phone || '')
+   createForm.city_id = String(user.cityId || user.city?.id || '')
+   createForm.city_name = String(user.cityLabel || user.city?.title || '')
+   createForm.latitude = String(user.latitude || '')
+   createForm.longitude = String(user.longitude || '')
+   phoneRaw.value = normalizePhoneForMask(user.phone)
+   isEditMode.value = true
+   editingUserId.value = normalizedUserId
+   shouldRemovePhoto.value = false
+   isCreateOpen.value = true
+
+   const existingPhotoUrl = resolveUserPhotoUrl(user)
+   if (existingPhotoUrl) {
+      photoPreviewUrl.value = existingPhotoUrl
+   }
+}
+
 const submitUser = async () => {
    createError.value = ''
    successPromptMessage.value = ''
@@ -635,7 +750,7 @@ const submitUser = async () => {
    }
 
    isSubmitting.value = true
-   const result = await createModerationUser({
+   const payload = {
       username: createForm.username.trim(),
       address: createForm.address.trim(),
       email: createForm.email.trim(),
@@ -643,19 +758,31 @@ const submitUser = async () => {
       city_id: createForm.city_id,
       latitude: createForm.latitude,
       longitude: createForm.longitude,
-      photo: photoFile.value
-   })
+      photo:
+         shouldRemovePhoto.value && !photoFile.value ? null : photoFile.value
+   }
+   const result =
+      isEditMode.value && editingUserId.value
+         ? await updateModerationUser(editingUserId.value, payload)
+         : await createModerationUser(payload)
    isSubmitting.value = false
 
    if (result?.success === false) {
-      createError.value = result.message || 'Не удалось создать пользователя.'
+      createError.value =
+         result.message ||
+         (isEditMode.value
+            ? 'Не удалось обновить пользователя.'
+            : 'Не удалось создать пользователя.')
       return
    }
 
    const nextUserId = resolveCreatedModerationUserId(result)
    successPromptMessage.value =
-      result?.message || 'Пользователь успешно создан.'
-   successPromptUserId.value = nextUserId
+      result?.message ||
+      (isEditMode.value
+         ? 'Пользователь успешно обновлен.'
+         : 'Пользователь успешно создан.')
+   successPromptUserId.value = isEditMode.value ? null : nextUserId
    resetForm()
    isCreateOpen.value = false
    await loadUsers()
@@ -673,6 +800,11 @@ const resetUserFilters = () => {
 }
 
 const handleRowAction = async (actionKey, row) => {
+   if (actionKey === 'edit_user') {
+      await startEditUser(row.userId || row.id)
+      return
+   }
+
    if (actionKey === 'open_ads') {
       await router.push({
          path: '/ads',
@@ -749,7 +881,7 @@ onMounted(loadUsers)
 
 .filters-panel {
    display: flex;
-   flex-wrap: wrap;
+   flex-wrap: nowrap;
    align-items: flex-end;
    gap: 12px;
    padding: 16px;
@@ -760,12 +892,12 @@ onMounted(loadUsers)
    flex-direction: column;
    gap: 8px;
    min-width: 0;
-   flex: 1 1 180px;
+   flex: 1 1 0;
 }
 
 .filters-panel__field--wide {
-   min-width: min(100%, 320px);
-   flex: 1 1 320px;
+   min-width: 0;
+   flex: 1.2 1 0;
 }
 
 .filters-panel__field span {
@@ -791,8 +923,15 @@ onMounted(loadUsers)
 .filters-panel__actions {
    display: flex;
    gap: 10px;
-   flex-wrap: wrap;
+   flex-wrap: nowrap;
    align-items: center;
+   flex: 0 0 auto;
+   margin-left: auto;
+}
+
+.filters-panel__action-button {
+   flex: 0 0 auto;
+   white-space: nowrap;
 }
 
 .button-inline {
@@ -997,6 +1136,9 @@ onMounted(loadUsers)
 }
 
 @media (max-width: 960px) {
+   .filters-panel {
+      flex-wrap: wrap;
+   }
 
    .admin-page__hero {
       align-items: stretch;
@@ -1027,6 +1169,8 @@ onMounted(loadUsers)
       width: 100%;
       flex-basis: 100%;
       margin-top: 2px;
+      margin-left: 0;
+      flex-wrap: wrap;
    }
 
    .filters-panel__action-button {

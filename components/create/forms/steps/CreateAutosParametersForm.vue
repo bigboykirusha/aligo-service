@@ -48,17 +48,6 @@ v-else layout="row" input-width="310px" searchable search-mode="startsWith"
                )
             }" @click="dismissRequiredField('country_id')"
             @update-sort="(value) => updateField('country_id', value)" />
-         <SwitcherCreateSkeleton v-if="false && loading" />
-         <UISwitcher
-v-else :options="conditionOptions" label="Состояние" :active-index="createStore.condition_id"
-            class="draft-required-field" :class="{
-               'draft-required-field--active': shouldHighlightRequiredField(
-                  'condition_id',
-                  createStore.condition_id
-               )
-            }" @click="dismissRequiredField('condition_id')" @update-selected="
-               (value) => updateField('condition_id', value)
-            " />
          <TextSkeleton v-if="loading" />
          <AutosTextTemplate
 v-else label="VIN или номер кузова" placeholder="Нажмите для ввода" :option="createStore.vin" validation-type="vin" :label-clickable="isMobileViewport"

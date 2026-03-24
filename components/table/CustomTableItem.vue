@@ -263,9 +263,9 @@ const resolveMenuItems = (column) => {
    justify-content: center;
    width: 34px;
    height: 34px;
-   border: 1px solid var(--color-border);
+   border: none;
    border-radius: 8px;
-   background: var(--color-surface);
+   background: #D6EFFF;
    cursor: pointer;
    transition:
       background-color 0.2s ease,
@@ -273,8 +273,7 @@ const resolveMenuItems = (column) => {
 }
 
 .table-row__menu-button:hover {
-   border-color: #bfdcff;
-   background: var(--color-surface-soft);
+   background: #A4DCFF;
 }
 
 .table-row__menu-icon {

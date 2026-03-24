@@ -12,12 +12,20 @@
       <form class="filters-panel" @submit.prevent="applyFilters">
          <label class="filters-panel__field filters-panel__field--wide">
             <span>Поиск</span>
-            <input v-model.trim="filters.search" type="text" placeholder="Бренд, модель или текст поиска">
+            <input
+               v-model.trim="filters.search"
+               type="text"
+               placeholder="Бренд, модель и т.п."
+            />
          </label>
 
          <label class="filters-panel__field">
             <span>User ID</span>
-            <input v-model.trim="filters.user_id" type="text" placeholder="107">
+            <input
+               v-model.trim="filters.user_id"
+               type="text"
+               placeholder="107"
+            />
          </label>
 
          <div class="filters-panel__field">
@@ -50,7 +58,7 @@
                class="filters-panel__action-button"
             >
                <span class="button-inline">
-                  <img :src="searchIcon" alt="" class="button-inline__icon">
+                  <img :src="searchIcon" alt="" class="button-inline__icon" />
                   <span>Показать</span>
                </span>
             </UIButton>
@@ -63,7 +71,7 @@
                @click="resetFilters"
             >
                <span class="button-inline">
-                  <img :src="refreshIcon" alt="" class="button-inline__icon">
+                  <img :src="refreshIcon" alt="" class="button-inline__icon" />
                   <span>Сбросить</span>
                </span>
             </UIButton>
@@ -164,7 +172,7 @@ const resetFilters = async () => {
 
 .filters-panel {
    display: flex;
-   flex-wrap: wrap;
+   flex-wrap: nowrap;
    align-items: flex-end;
    gap: 12px;
    padding: 16px;
@@ -180,17 +188,17 @@ const resetFilters = async () => {
    gap: 8px;
    font-size: 14px;
    min-width: 0;
-   flex: 1 1 180px;
+   flex: 1 1 0;
 }
 
 .filters-panel__field--wide {
-   min-width: min(100%, 320px);
-   flex: 1 1 320px;
+   min-width: 0;
+   flex: 1.2 1 0;
 }
 
 .filters-panel__field--statuses {
-   min-width: 280px;
-   flex: 1 1 280px;
+   min-width: 0;
+   flex: 1.1 1 0;
 }
 
 .filters-panel__field span {
@@ -218,8 +226,15 @@ const resetFilters = async () => {
 .filters-panel__actions {
    display: flex;
    gap: 10px;
-   flex-wrap: wrap;
+   flex-wrap: nowrap;
    align-items: center;
+   flex: 0 0 auto;
+   margin-left: auto;
+}
+
+.filters-panel__action-button {
+   flex: 0 0 auto;
+   white-space: nowrap;
 }
 
 .button-inline {
@@ -243,6 +258,10 @@ const resetFilters = async () => {
 }
 
 @media (max-width: 768px) {
+   .filters-panel {
+      flex-wrap: wrap;
+   }
+
    .admin-page__hero {
       align-items: stretch;
       flex-direction: column;
@@ -257,6 +276,8 @@ const resetFilters = async () => {
       width: 100%;
       flex-basis: 100%;
       margin-top: 2px;
+      margin-left: 0;
+      flex-wrap: wrap;
    }
 
    .filters-panel__action-button {

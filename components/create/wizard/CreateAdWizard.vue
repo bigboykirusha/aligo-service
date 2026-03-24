@@ -133,6 +133,11 @@ const currentStepProps = computed(() =>
 
    &__desktop-pane {
       width: 100%;
+      margin-bottom: 84px;
+
+      @media (max-width: 768px) {
+         margin-bottom: 0;
+      }
    }
 
    &__actions {

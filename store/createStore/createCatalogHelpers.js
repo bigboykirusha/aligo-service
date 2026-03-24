@@ -192,12 +192,6 @@ export const buildCreateEditRouteDto = ({ source, userId } = {}) => {
    const dto = {
       id,
       idUserOwnerAds: ownerId,
-      createByUserId: firstPresentValue(
-         source?.create_by_user_id,
-         ownerId,
-         userId,
-         ''
-      ),
       mainCategoryId: firstPresentValue(
          source?.mainCategoryId,
          source?.main_category_id,
@@ -235,7 +229,6 @@ export const buildCreateEditRouteQueryFromDto = (dto) => {
       ad: {
          id: dto.id,
          id_user_owner_ads: dto.idUserOwnerAds,
-         create_by_user_id: dto.createByUserId,
          main_category_id: dto.mainCategoryId,
          sub_category_id: dto.subCategoryId,
          last_category_id: dto.lastCategoryId,
@@ -271,11 +264,6 @@ export const buildCreateEditRouteQuery = ({ ad, userId }) => {
    const query = {
       id,
       id_user_owner_ads: ownerId
-   }
-
-   const createByUserId = ad?.create_by_user_id || ownerId || ''
-   if (createByUserId) {
-      query.create_by_user_id = createByUserId
    }
 
    const mainCategoryId = ad?.main_category_id ?? ad?.main_category?.id ?? null

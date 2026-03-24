@@ -25,7 +25,7 @@ export default defineNuxtConfig({
                href: '/favicons/apple-touch-icon.png'
             }
          ],
-         title: 'Aligo Admin',
+         title: 'Aligo Сервис',
          meta: [
             {
                name: 'viewport',

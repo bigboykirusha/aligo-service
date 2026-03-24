@@ -1,4 +1,4 @@
-﻿<template>
+<template>
    <header
       class="app-header-row"
       :class="{
@@ -39,9 +39,7 @@
             </div>
 
             <div class="app-header-row__create-copy">
-               <div class="app-header-row__title">
-                  Новое объявление
-               </div>
+               <div class="app-header-row__title">Новое объявление</div>
 
                <div v-if="isCreateAdPage" class="app-header-row__breadcrumb">
                   <span class="app-header-row__breadcrumb-item">
@@ -66,7 +64,7 @@
 
             <div class="app-header-row__create-actions">
                <button
-                  v-if="isCreateAdPage && !isDesktop"
+                  v-if="isCreateAdPage"
                   type="button"
                   class="app-header-row__icon-button app-header-row__icon-button--close"
                   aria-label="Закрыть создание"
@@ -84,9 +82,7 @@
                   alt="Aligo"
                   class="app-header-row__brand-logo"
                />
-               <span class="app-header-row__brand-text"
-                  >Сервис публикации</span
-               >
+               <span class="app-header-row__brand-text">Сервис публикации</span>
             </NuxtLink>
 
             <nav
@@ -208,6 +204,25 @@ const isCreateAdPage = computed(() =>
       return value !== null && value !== undefined && value !== ''
    })
 )
+const isForeignAdEditMode = computed(() => {
+   const editIdRaw = route.query?.id
+   const editId = Array.isArray(editIdRaw) ? editIdRaw[0] : editIdRaw
+   if (editId === null || editId === undefined || editId === '') return false
+
+   const createByUserIdRaw = route.query?.create_by_user_id
+   const createByUserId = Array.isArray(createByUserIdRaw)
+      ? createByUserIdRaw[0]
+      : createByUserIdRaw
+   if (
+      createByUserId === null ||
+      createByUserId === undefined ||
+      createByUserId === ''
+   ) {
+      return false
+   }
+
+   return String(createByUserId) !== String(userStore.userId || '')
+})
 
 const createFlow = computed(() =>
    typeof createStore.create_flow === 'string'
@@ -248,9 +263,7 @@ const createCategoryLabel = computed(() => {
    if (mainCategoryId === 2) return 'Мототехника'
    if (mainCategoryId === 1) return 'Автомобили'
 
-   return (
-      categorySelectStore.selectedCategories[0]?.name || 'Автомобили'
-   )
+   return categorySelectStore.selectedCategories[0]?.name || 'Автомобили'
 })
 
 const createConditionLabel = computed(() => {
@@ -296,7 +309,18 @@ const handleLogout = async () => {
    await navigateTo('/authorization')
 }
 
+const leaveForeignAdEdit = async () => {
+   createStore.resetParams()
+   categorySelectStore.clearSelectedCategories()
+   await router.push('/')
+}
+
 const goCreateBack = async () => {
+   if (isForeignAdEditMode.value) {
+      await leaveForeignAdEdit()
+      return
+   }
+
    if (createStore.activeTab > 1) {
       createStore.setActiveTab(createStore.activeTab - 1)
       return
@@ -306,8 +330,13 @@ const goCreateBack = async () => {
 }
 
 const handleCreateExitClick = async () => {
-   if (createStore.isAnyFieldFilled) {
+   if (createStore.hasUnsavedChanges) {
       modalStore.open('createAdSaveExit')
+      return
+   }
+
+   if (isForeignAdEditMode.value) {
+      await leaveForeignAdEdit()
       return
    }
 

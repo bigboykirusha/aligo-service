@@ -31,7 +31,7 @@ export default defineNuxtPlugin(() => {
    })
 
    const routeRequiresAuth = () => {
-      if (Boolean(route.meta?.requiresAuth)) return true
+      if (route.meta?.requiresAuth) return true
 
       const path = String(route.path || '').toLowerCase()
       return AUTH_REQUIRED_PREFIXES.some(

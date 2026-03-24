@@ -185,11 +185,21 @@ export const useModerationAdsTable = () => {
       {
          key: 'title',
          label: 'Объявление',
-         width: '360px',
+         width: '320px',
          columnClass: 'title',
          format: (row) => ({
             title: row.title,
-            subtitle: row.cityLabel || 'Локация не указана'
+            subtitle: ''
+         })
+      },
+      {
+         key: 'location',
+         label: 'Локация',
+         width: '220px',
+         columnClass: 'location',
+         format: (row) => ({
+            title: row.cityLabel || 'Город не указан',
+            subtitle: row.raw?.ads_parameter?.place_inspection || ''
          })
       },
       {
@@ -352,6 +362,10 @@ export const useModerationAdsTable = () => {
          })
 
          if (!location) return
+         location.query = {
+            ...location.query,
+            create_by_user_id: row?.userId || ''
+         }
          await router.push(location)
          return
       }
