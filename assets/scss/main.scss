@@ -25,6 +25,7 @@
 
 html {
    color: var(--color-text-primary);
+   -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -275,6 +276,15 @@ body.photo-viewer-scroll-lock {
 }
 
 @media (max-width: 768px) {
+   @supports (-webkit-touch-callout: none) {
+      input,
+      textarea,
+      select {
+         font-size: var(--font-size-16) !important;
+         line-height: var(--line-height-16) !important;
+      }
+   }
+
    .ios-modal-sheet-enter-active .popup-modal,
    .ios-modal-sheet-leave-active .popup-modal,
    .modal-sheet-enter-active .popup-modal,
