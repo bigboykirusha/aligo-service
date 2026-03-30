@@ -1,7 +1,7 @@
 <template>
    <div class="characteristics">
       <div v-if="showDraftRecoveryConditionField" class="characteristics__content">
-         <UISwitcher v-show="false"
+         <UISwitcher
             :options="conditionOptions"
             label="Состояние"
             :active-index="createStore.condition_id"

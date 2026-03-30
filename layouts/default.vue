@@ -16,6 +16,7 @@
 
       <ClientOnly>
          <LocationModal v-if="modalStore.isVisible('location')" />
+         <ToastStack />
       </ClientOnly>
    </div>
 </template>
@@ -26,6 +27,7 @@ import { useRoute } from '#app'
 import AppHeaderRow from '@/components/header-row/AppHeaderRow.vue'
 import BottomToolbar from '@/components/BottomToolbar.vue'
 import LocationModal from '~/components/popups/LocationModal.vue'
+import ToastStack from '~/components/ui/ToastStack.vue'
 import { useModalStore } from '~/store/modalStore'
 
 const route = useRoute()

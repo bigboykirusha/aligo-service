@@ -92,7 +92,15 @@ export const useCreateAdWizardModel = ({ props, emit }) => {
    }
 
    const saveAndExit = () => {
-      if (props.isPublishing || props.isSaving) return
+      if (showBusyActionWarning('сохранить черновик')) return
+
+      if (!createStore.isAnyFieldFilled) {
+         popupErrorStore.showWarning(
+            'Сохранение недоступно: в форме пока нет заполненных полей.'
+         )
+         return
+      }
+
       emit('saveAd')
    }
 
@@ -106,8 +114,26 @@ export const useCreateAdWizardModel = ({ props, emit }) => {
       popupErrorStore.showError(buildCreateAdRequiredFieldsMessage(createStore))
    }
 
+   const showBusyActionWarning = (actionLabel) => {
+      if (props.isPublishing) {
+         popupErrorStore.showWarning(
+            `Сейчас идет публикация объявления. Дождитесь завершения, чтобы ${actionLabel}.`
+         )
+         return true
+      }
+
+      if (props.isSaving) {
+         popupErrorStore.showWarning(
+            `Сейчас идет сохранение черновика. Дождитесь завершения, чтобы ${actionLabel}.`
+         )
+         return true
+      }
+
+      return false
+   }
+
    const publishAndExit = () => {
-      if (props.isPublishing || props.isSaving) return
+      if (showBusyActionWarning('продолжить работу с формой')) return
 
       if (!isPublishEnabled.value) {
          showAdRequiredFieldsError()
@@ -118,6 +144,8 @@ export const useCreateAdWizardModel = ({ props, emit }) => {
    }
 
    const continueToNextTab = () => {
+      if (showBusyActionWarning('перейти к следующему шагу')) return
+
       if (!isNextEnabled.value) {
          showCharacteristicsRequiredFieldsError()
          return

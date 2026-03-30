@@ -83,6 +83,53 @@ const resolveCollectionPayload = (response) => {
    }
 }
 
+const resolveCollectionPaginationMeta = (
+   response,
+   { fallbackPage = 1, fallbackCount = DEFAULT_ADS_PAGE_SIZE } = {}
+) => {
+   const body = getResponseBody(response)
+   const pageItemCount =
+      toOptionalNumber(body?.count_on_page) ||
+      toOptionalNumber(body?.pagination?.count_on_page) ||
+      toOptionalNumber(body?.meta?.count_on_page) ||
+      0
+   const total =
+      getResponseTotalCount(response) ||
+      toOptionalNumber(body?.total_count) ||
+      toOptionalNumber(body?.totalCount) ||
+      toOptionalNumber(body?.pagination?.total_count) ||
+      toOptionalNumber(body?.pagination?.total) ||
+      toOptionalNumber(body?.meta?.total_count) ||
+      toOptionalNumber(body?.meta?.total) ||
+      0
+
+   const currentPage =
+      toOptionalNumber(body?.current_page) ||
+      toOptionalNumber(body?.pagination?.current_page) ||
+      toOptionalNumber(body?.meta?.current_page) ||
+      fallbackPage
+
+   const perPage =
+      toOptionalNumber(body?.per_page) ||
+      toOptionalNumber(body?.pagination?.per_page) ||
+      toOptionalNumber(body?.meta?.per_page) ||
+      fallbackCount
+
+   const totalPages =
+      toOptionalNumber(body?.total_page) ||
+      toOptionalNumber(body?.pagination?.total_page) ||
+      toOptionalNumber(body?.meta?.total_page) ||
+      Math.max(1, Math.ceil(total / Math.max(perPage || 0, 1)))
+
+   return {
+      total,
+      currentPage,
+      perPage,
+      totalPages,
+      pageItemCount
+   }
+}
+
 const resolveStatusDescriptor = (source = {}) => {
    const flags = {
       is_deleted: Number(source?.is_deleted) === 1,
@@ -424,6 +471,21 @@ const buildAdsParams = (filters = {}) => {
    return params
 }
 
+const buildUsersParams = (filters = {}) => {
+   const params = {
+      page: toOptionalNumber(filters.page) ?? 1,
+      count: toOptionalNumber(filters.count) ?? DEFAULT_ADS_PAGE_SIZE,
+      order_by: toOptionalString(filters.order_by || 'desc') || 'desc'
+   }
+
+   const search = toOptionalString(filters.search)
+   if (search) {
+      params.search = search
+   }
+
+   return params
+}
+
 const buildCreateUserFormData = (payload = {}) => {
    if (typeof FormData === 'undefined') {
       throw new Error('FormData is not available in the current runtime.')
@@ -466,15 +528,28 @@ const buildUpdateUserFormData = (payload = {}) => {
    return formData
 }
 
-export const getModerationUsers = async () => {
+export const getModerationUsers = async (filters = {}) => {
    return executeApiRequest(
       async () => {
          const apiClient = getApiClient()
+         const params = buildUsersParams(filters)
          const response = await apiClient.get(
-            '/moderations/action_with_users/get_all_users'
+            '/moderations/action_with_users/get_all_users',
+            { params }
          )
-         const { items } = resolveCollectionPayload(response)
-         return items.map(normalizeUser)
+         const { items, total } = resolveCollectionPayload(response)
+         const pagination = resolveCollectionPaginationMeta(response, {
+            fallbackPage: params.page,
+            fallbackCount: params.count
+         })
+
+         return {
+            items: items.map(normalizeUser),
+            total: pagination.total || total,
+            currentPage: pagination.currentPage,
+            perPage: pagination.perPage,
+            totalPages: pagination.totalPages
+         }
       },
       {
          errorMessage:
@@ -568,16 +643,25 @@ export const getModerationAds = async (filters = {}) => {
    return executeApiRequest(
       async () => {
          const apiClient = getApiClient()
+         const params = buildAdsParams(filters)
          const response = await apiClient.get(
             '/moderations/all_ads/get_exists_ads',
             {
-               params: buildAdsParams(filters)
+               params
             }
          )
          const { items, total } = resolveCollectionPayload(response)
+         const pagination = resolveCollectionPaginationMeta(response, {
+            fallbackPage: params.page,
+            fallbackCount: params.count
+         })
+
          return {
             items: items.map(normalizeAd),
-            total
+            total: pagination.total || total,
+            currentPage: pagination.currentPage,
+            perPage: pagination.perPage,
+            totalPages: pagination.totalPages
          }
       },
       {

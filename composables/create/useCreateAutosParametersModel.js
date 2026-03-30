@@ -41,7 +41,7 @@ export const useCreateAutosParametersModel = () => {
          Number(createStore.country_id) !== 1
    )
    const showDraftRecoveryConditionField = computed(
-      () => isDraftEditMode.value && !createStore.condition_id
+      () => !createStore.condition_id
    )
    const showUsedOptions = computed(() => Number(createStore.condition_id) === 2)
    const showModelField = computed(() => Boolean(createStore.brand_id))

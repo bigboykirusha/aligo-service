@@ -7,40 +7,8 @@
             class="toast"
             :class="`toast--${toast.type}`"
          >
-            <button
-               v-if="toast.payload?.kind === 'chat-message'"
-               type="button"
-               class="toast__content toast__content--chat"
-               @click="handleToastOpen(toast)"
-            >
-               <img
-                  :src="toast.payload.avatarUrl || avatarFallback"
-                  alt="avatar"
-                  class="toast__avatar"
-               >
-               <div class="toast__body">
-                  <div class="toast__title-row">
-                     <p class="toast__title">
-                        {{ toast.payload.title || toast.message }}
-                     </p>
-                  </div>
-                  <p class="toast__text toast__text--chat">
-                     {{ toast.payload.messageText || toast.message }}
-                  </p>
-               </div>
-            </button>
 
-            <p v-else class="toast__text">{{ toast.message }}</p>
-
-            <button
-               v-if="toast.payload?.kind === 'chat-message'"
-               type="button"
-               class="toast__action-button"
-               aria-label="Перейти в чат"
-               @click="handleToastAction(toast)"
-            >
-               <img :src="outIcon" alt="open chat">
-            </button>
+            <p class="toast__text">{{ toast.message }}</p>
 
             <button
                v-if="toast.dismissible !== false"
@@ -65,46 +33,14 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
 import { usePopupErrorStore } from '@/store/popupErrorStore'
-import { useChatStore } from '~/store/chatStore'
-import avatarFallback from '~/assets/icons/avatar-revers.svg'
-import outIcon from '~/assets/icons/out.svg'
 
 defineOptions({
    name: 'ToastStack'
 })
 
 const popupErrorStore = usePopupErrorStore()
-const chatStore = useChatStore()
-const router = useRouter()
 
-const openToastChat = (toast) => {
-   const payload = toast?.payload
-   if (!payload || payload.kind !== 'chat-message') return
-
-   if (payload.chat) {
-      chatStore.setCurrentChat(payload.chat)
-      chatStore.showChat()
-      chatStore.openChat()
-   }
-}
-
-const handleToastOpen = async (toast) => {
-   if (import.meta.client && window.innerWidth > 768) {
-      openToastChat(toast)
-      popupErrorStore.removeNotification(toast.id)
-      return
-   }
-
-   await handleToastAction(toast)
-}
-
-const handleToastAction = async (toast) => {
-   openToastChat(toast)
-   await router.push(toast?.payload?.href || '/profile/messages')
-   popupErrorStore.removeNotification(toast.id)
-}
 </script>
 
 <style lang="scss" scoped>

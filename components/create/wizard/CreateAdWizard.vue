@@ -16,9 +16,9 @@
                class="create-ad-form__button create-ad-form__button--continue"
                :class="{
                   disabled:
-                     !canPublishNow && !props.isPublishing && !props.isSaving
+                     !canPublishNow || props.isPublishing || props.isSaving
                }"
-               :disabled="props.isPublishing || props.isSaving"
+               :aria-disabled="(!canPublishNow || props.isPublishing || props.isSaving).toString()"
                @click="publishAndExit"
             >
                <span v-if="props.isPublishing" class="spinner" />
@@ -28,7 +28,7 @@
             <button
                class="create-ad-form__button create-ad-form__button--save"
                :class="{ disabled: !isSaveAndExitEnabled }"
-               :disabled="!isSaveAndExitEnabled"
+               :aria-disabled="(!isSaveAndExitEnabled).toString()"
                @click="saveAndExit"
             >
                <span v-if="props.isSaving" class="spinner" />

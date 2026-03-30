@@ -821,8 +821,10 @@ watch(showCodeInput, () => {
 @media (max-width: 960px) {
    .authorization-page {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       box-sizing: border-box;
+      overflow-x: hidden;
+      overflow-y: auto;
       padding: 40px 16px;
    }
 
@@ -831,10 +833,10 @@ watch(showCodeInput, () => {
       grid-template-areas:
          'card'
          'visual';
-      grid-template-rows: minmax(0, 1fr) auto;
+      grid-template-rows: auto auto;
       align-content: stretch;
       gap: 24px;
-      height: calc(100dvh - 80px);
+      min-height: calc(100dvh - 80px);
       max-width: 100%;
       padding: 0;
    }
@@ -870,14 +872,18 @@ watch(showCodeInput, () => {
       opacity: 1;
    }
 
+   .authorization-page__hint-card:nth-child(3) {
+      display: none;
+   }
+
    .authorization-page__hint-text {
       color: rgba(255, 255, 255, 0.8);
    }
 
    .authorization-card {
       grid-area: card;
-      min-height: 0;
-      height: 100%;
+      min-height: 310px;
+      height: auto;
       padding: 24px;
       border-radius: 24px;
    }

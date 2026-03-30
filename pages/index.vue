@@ -162,7 +162,7 @@
          </form>
       </section>
 
-      <form class="filters-panel" @submit.prevent="currentPage = 1">
+      <form class="filters-panel" @submit.prevent="applyUserFilters">
          <label class="filters-panel__field filters-panel__field--wide">
             <span>Поиск</span>
             <input
@@ -235,16 +235,16 @@
 
       <CustomTable
          :columns="tableColumns"
-         :rows="paginatedUsers"
+         :rows="users"
          :loading="isLoading"
-         :total="filteredUsers.length"
+         :total="totalUsers"
          :per-page="perPage"
          :current-page="currentPage"
          row-key="id"
          empty-title="Пользователи не найдены"
          empty-text="Попробуй изменить поиск или обновить список."
          @row-action="handleRowAction"
-         @update:current-page="currentPage = $event"
+         @update:current-page="loadUsers"
          @update:per-page="handlePerPageChange"
       />
    </section>
@@ -283,6 +283,7 @@ definePageMeta({
 const router = useRouter()
 const modalStore = useModalStore()
 const users = ref([])
+const totalUsers = ref(0)
 const isLoading = ref(false)
 const isSubmitting = ref(false)
 const isCreateOpen = ref(false)
@@ -295,7 +296,7 @@ const successPromptUserId = ref(null)
 const searchQuery = ref('')
 const sortOrder = ref('desc')
 const currentPage = ref(1)
-const perPage = ref(10)
+const perPage = ref(20)
 const photoFile = ref(null)
 const photoInputRef = ref(null)
 const photoPreviewUrl = ref('')
@@ -439,46 +440,6 @@ const columns = computed(() => [
 
 const tableColumns = computed(() => columns.value)
 
-const filteredUsers = computed(() => {
-   const query = searchQuery.value.trim().toLowerCase()
-
-   const filtered = users.value.filter((user) => {
-      if (!query) return true
-
-      return [
-         user.id,
-         user.statusLabel,
-         user.username,
-         user.phone,
-         user.email,
-         user.login,
-         user.cityId,
-         user.cityLabel,
-         user.adsCountPublished,
-         user.adsCountOffPublished,
-         user.adsCountInArchive
-      ]
-         .filter(Boolean)
-         .join(' ')
-         .toLowerCase()
-         .includes(query)
-   })
-
-   return [...filtered].sort((a, b) => {
-      const leftDate = new Date(a.createdAt || '').getTime()
-      const rightDate = new Date(b.createdAt || '').getTime()
-      const left = Number.isFinite(leftDate) ? leftDate : Number(a.id || 0)
-      const right = Number.isFinite(rightDate) ? rightDate : Number(b.id || 0)
-
-      return sortOrder.value === 'asc' ? left - right : right - left
-   })
-})
-
-const paginatedUsers = computed(() => {
-   const startIndex = (currentPage.value - 1) * perPage.value
-   return filteredUsers.value.slice(startIndex, startIndex + perPage.value)
-})
-
 const revokePhotoPreview = () => {
    if (!photoPreviewUrl.value) return
    if (photoPreviewUrl.value.startsWith('blob:')) {
@@ -522,21 +483,35 @@ const openCreateForUser = async (userId) => {
    })
 }
 
-const loadUsers = async () => {
+const loadUsers = async (page = currentPage.value) => {
+   currentPage.value = Number(page) || 1
    isLoading.value = true
    errorMessage.value = ''
-   const result = await getModerationUsers()
+   const result = await getModerationUsers({
+      page: currentPage.value,
+      count: perPage.value,
+      search: searchQuery.value,
+      order_by: sortOrder.value
+   })
 
    if (result?.success === false) {
       users.value = []
+      totalUsers.value = 0
       errorMessage.value =
          result.message || 'Ошибка при загрузке списка пользователей.'
       isLoading.value = false
       return
    }
 
-   users.value = Array.isArray(result) ? result : []
+   users.value = Array.isArray(result?.items) ? result.items : []
+   totalUsers.value = Number(result?.total) || users.value.length
+   currentPage.value = Number(result?.currentPage) || currentPage.value
+   perPage.value = Number(result?.perPage) || perPage.value
    isLoading.value = false
+}
+
+const applyUserFilters = async () => {
+   await loadUsers(1)
 }
 
 const toggleCreatePanel = () => {
@@ -785,18 +760,18 @@ const submitUser = async () => {
    successPromptUserId.value = isEditMode.value ? null : nextUserId
    resetForm()
    isCreateOpen.value = false
-   await loadUsers()
+   await loadUsers(currentPage.value)
 }
 
-const handlePerPageChange = (value) => {
+const handlePerPageChange = async (value) => {
    perPage.value = value
-   currentPage.value = 1
+   await loadUsers(1)
 }
 
-const resetUserFilters = () => {
+const resetUserFilters = async () => {
    searchQuery.value = ''
    sortOrder.value = 'desc'
-   currentPage.value = 1
+   await loadUsers(1)
 }
 
 const handleRowAction = async (actionKey, row) => {
@@ -817,14 +792,6 @@ const handleRowAction = async (actionKey, row) => {
       await openCreateForUser(row.userId)
    }
 }
-
-watch(searchQuery, () => {
-   currentPage.value = 1
-})
-
-watch(sortOrder, () => {
-   currentPage.value = 1
-})
 
 watch(formattedPhone, (value) => {
    createForm.phone = value

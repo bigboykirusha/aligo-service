@@ -301,6 +301,8 @@ export const useModerationAdsTable = () => {
 
       ads.value = Array.isArray(result?.items) ? result.items : []
       totalAds.value = Number(result?.total) || ads.value.length
+      currentPage.value = Number(result?.currentPage) || currentPage.value
+      filters.count = Number(result?.perPage) || filters.count
    }
 
    const handleStatusesChange = (keys) => {
